@@ -1,0 +1,56 @@
+page-servicio {
+    .grid-full ionrow {
+        height: 100%;
+        padding: 0;
+        flexwrap: wrap;
+    }
+      
+    .grid-full ioncol {
+        flex: 0 0 50%;
+        maxwidth: 50%;
+        padding: 0px 0px;
+    }
+     
+    .cell-1 {
+        backgroundcolor: rgb(255, 255, 255);
+        border: thin solid rgb(182, 182, 182);
+    }
+
+    .action-Sheet1{
+        height: 100px
+    }
+
+    .ion-card {
+        position: relative;
+        textalign: center;
+    }
+
+    .card-title {
+        position: absolute;
+        top: 9%;
+        fontsize: 2.0em;
+        width: 100%;
+        fontweight: bold;
+        color: #fff;
+        textshadow: 0 0 2px #000;
+    }
+
+    .card-subtitle {
+        fontsize: 1.0em;
+        position: absolute;
+        top: 30%;
+        width: 100%;
+        color: #fff;
+        textshadow: 0 0 2px #000;
+    }
+
+    .card-precio {
+        fontsize: 1.0em;
+        position: absolute;
+        top: 40%;
+        width: 100%;
+        color: #fff;
+        textshadow: 0 0 2px #000;
+    }
+
+}
