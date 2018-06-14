@@ -19,11 +19,16 @@
         <ion-row>
           <ion-col #item *ngFor="let servicio of item.servicios" class="cell-1">
             <img *ngIf="servicio.imagen" [src]="servicio.imagen">
-            <div class="card-title">{{servicio.nombre}}</div>
-            <div class="card-subtitle">{{servicio.descripcion}}. Duración: {{servicio.duracion_MIN}} minutos.</div>
-            <ion-item>
-              <strong>{{servicio.valor| currency : USD: symbol: '4.0' }}</strong>
-            </ion-item>
+            <ion-card>
+              <ion-item>
+                <h2 style="text-align: center"><strong>{{servicio.nombre}}</strong></h2>
+                <p>{{servicio.descripcion}}.</p>
+              </ion-item>
+              <ion-item>
+                <p item-start>Duración: {{servicio.duracion_MIN}} min.</p>
+                <strong item-end>{{servicio.valor| currency : USD: symbol: '4.0' }}</strong>
+              </ion-item>
+            </ion-card>
           </ion-col>
         </ion-row>
       </ion-grid>
