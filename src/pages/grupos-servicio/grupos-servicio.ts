@@ -40,9 +40,16 @@ export class GruposServicioPage {
   }
 
   updateGrupos() {
+    this.grupos = [];
+    let grupos = [];
     this.servicioColl.valueChanges().subscribe(data => {
       if (data) {
-        this.grupos = data.map(servicio => servicio.grupo);
+        data.map(servicio => servicio.grupo).forEach(item => {
+          if(grupos[item] === undefined){
+            grupos[item] = item;
+            this.grupos.push(item);
+          }
+        });
       }
     });
   }

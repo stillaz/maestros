@@ -68,12 +68,32 @@
         </ion-item>
 
         <ion-item>
-          <div text-center>
-            <img [src]="todo.controls.imagen.value" *ngIf="todo.controls.imagen.value" />
-            <button center ion-button icon-only outline round large color="dark" type="button" (tap)="sacarFoto()">
-              <ion-icon name="camera"></ion-icon>
+          <ion-input type="file" accept="image/*" (change)="changeListener($event)"></ion-input>
+        </ion-item>
+
+        <ion-item style="height: 100px">
+          <img [src]="todo.controls.imagen.value" *ngIf="todo.controls.imagen.value" />
+
+          <div text-center *ngIf="!mobile">
+
+            <button center ion-button icon-only clear large color="dark" type="button" (tap)="cargarImagen()">
+              <ion-icon name="image"></ion-icon>
             </button>
           </div>
+
+          <ion-fab bottom center *ngIf="mobile">
+            <button ion-fab mini>
+              <ion-icon name="image"></ion-icon>
+            </button>
+            <ion-fab-list side="left">
+              <button ion-fab>
+                <ion-icon name="camera"></ion-icon>
+              </button>
+              <button ion-fab>
+                <ion-icon name="cloud-upload"></ion-icon>
+              </button>
+            </ion-fab-list>
+          </ion-fab>
         </ion-item>
 
         <button ion-button type="submit" icon-right block color="secondary" [disabled]="todo.invalid" (click)="guardar()">Guardar

@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IonicPage, NavController, NavParams, AlertController, ViewController, ModalController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController, ViewController, ModalController, Platform } from 'ionic-angular';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { ServicioOptions } from '../../interfaces/servicio-options';
+import { FileChooser } from '@ionic-native/file-chooser';
 
 /**
  * Generated class for the DetalleServicioPage page.
@@ -22,6 +23,8 @@ export class DetalleServicioPage {
 
   nuevo: boolean = true;
 
+  mobile: boolean;
+
   public servicio: ServicioOptions;
 
   private servicioDoc: AngularFirestoreDocument<ServicioOptions>;
@@ -33,8 +36,11 @@ export class DetalleServicioPage {
     public alertCtrl: AlertController,
     public viewCtrl: ViewController,
     private formBuilder: FormBuilder,
-    public modalCtrl: ModalController
+    public modalCtrl: ModalController,
+    public plt: Platform,
+    public fileChooser: FileChooser
   ) {
+    this.mobile = !plt.is('core');
     this.servicio = this.navParams.get('servicio');
     this.cargar();
   }
@@ -76,6 +82,15 @@ export class DetalleServicioPage {
     });
 
     this.form();
+  }
+
+  changeListener($event) {
+    console.log($event.target.files[0]);
+    this.todo.patchValue({imagen: $event.target.files[0]});
+  }
+
+  cargarImagen(){
+    this.fileChooser.open();
   }
 
   guardar() {
