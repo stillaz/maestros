@@ -6,19 +6,12 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFireStorageModule } from 'angularfire2/storage';
 import { FileChooser } from '@ionic-native/file-chooser';
 
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
-
-export const firebaseConfig = {
-  apiKey: "AIzaSyD_K1Iw-jUr8-2Sesm5_Yqq-LaiL7ljj3c",
-  authDomain: "barberia-12b66.firebaseapp.com",
-  databaseURL: "https://barberia-12b66.firebaseio.com",
-  projectId: "barberia-12b66",
-  storageBucket: "barberia-12b66.appspot.com",
-  messagingSenderId: "603689567449"
-};
+import { firebaseConfig } from './firebase.config';
 
 @NgModule({
   declarations: [
@@ -30,6 +23,7 @@ export const firebaseConfig = {
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(firebaseConfig),
     AngularFirestoreModule.enablePersistence(),
+    AngularFireStorageModule,
     AngularFireAuthModule
   ],
   bootstrap: [IonicApp],

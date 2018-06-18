@@ -45,8 +45,14 @@ export class ServicioPage {
     }
   }
 
-  crear(){
+  crear() {
     this.navCtrl.push('DetalleServicioPage');
+  }
+
+  ver(servicio: ServicioOptions) {
+    this.navCtrl.push('DetalleServicioPage', {
+      servicio: servicio
+    });
   }
 
 }

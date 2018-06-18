@@ -2,8 +2,10 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicPage, NavController, NavParams, AlertController, ViewController, ModalController, Platform } from 'ionic-angular';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
+import { AngularFireStorage } from 'angularfire2/storage';
 import { ServicioOptions } from '../../interfaces/servicio-options';
 import { FileChooser } from '@ionic-native/file-chooser';
+import { finalize } from 'rxjs/operators';
 
 /**
  * Generated class for the DetalleServicioPage page.
@@ -25,6 +27,8 @@ export class DetalleServicioPage {
 
   mobile: boolean;
 
+  filePath: string;
+
   public servicio: ServicioOptions;
 
   private servicioDoc: AngularFirestoreDocument<ServicioOptions>;
@@ -38,7 +42,8 @@ export class DetalleServicioPage {
     private formBuilder: FormBuilder,
     public modalCtrl: ModalController,
     public plt: Platform,
-    public fileChooser: FileChooser
+    public fileChooser: FileChooser,
+    private storage: AngularFireStorage
   ) {
     this.mobile = !plt.is('core');
     this.servicio = this.navParams.get('servicio');
@@ -72,7 +77,8 @@ export class DetalleServicioPage {
       };
     }
 
-    this.servicioDoc = this.afs.doc<ServicioOptions>('servicios/' + this.servicio.id);
+    this.filePath = 'servicios/' + this.servicio.id;
+    this.servicioDoc = this.afs.doc<ServicioOptions>(this.filePath);
     this.servicioDoc.valueChanges().subscribe(data => {
       if (data) {
         this.servicio = data;
@@ -84,12 +90,24 @@ export class DetalleServicioPage {
     this.form();
   }
 
-  changeListener($event) {
-    console.log($event.target.files[0]);
-    this.todo.patchValue({imagen: $event.target.files[0]});
+  seleccionarImagen(event) {
+    let imagen = event.target.files[0];
+    this.uploadImage(imagen);
   }
 
-  cargarImagen(){
+  uploadImage(file) {
+    let fileRef = this.storage.ref(this.filePath);
+    let task = this.storage.upload(this.filePath, file);
+    task.snapshotChanges().pipe(
+      finalize(() => {
+        fileRef.getDownloadURL().subscribe(data => {
+          this.todo.patchValue({ imagen: data });
+        });
+      })
+    ).subscribe();
+  }
+
+  cargarImagen() {
     this.fileChooser.open();
   }
 
@@ -112,6 +130,48 @@ export class DetalleServicioPage {
     menu.onDidDismiss(data => {
       this.todo.patchValue({ grupo: data });
     });
+  }
+
+  cerrar() {
+    this.viewCtrl.dismiss();
+  }
+
+  genericAlert(title: string, message: string) {
+    let alert = this.alertCtrl.create({
+      title: title,
+      message: message,
+      buttons: [{
+        text: 'OK',
+        handler: () => {
+          this.viewCtrl.dismiss();
+        }
+      }]
+    });
+    alert.present();
+  }
+
+  eliminar() {
+    let producto = this.todo.value;
+    let alert = this.alertCtrl.create({
+      title: 'Eliminar producto',
+      message: '¿Desea eliminar el producto ' + producto.descripcion + ' ' + producto.marca + '?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel'
+        },
+        {
+          text: 'Si',
+          handler: () => {
+            this.servicioDoc.delete().then(() => {
+              this.storage.ref(this.filePath).delete();
+              this.genericAlert('Eliminar producto', 'El producto ha sido eliminado');
+            });
+          }
+        }
+      ]
+    });
+    alert.present();
   }
 
 }
