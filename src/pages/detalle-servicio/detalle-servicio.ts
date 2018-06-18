@@ -6,6 +6,8 @@ import { AngularFireStorage } from 'angularfire2/storage';
 import { ServicioOptions } from '../../interfaces/servicio-options';
 import { FileChooser } from '@ionic-native/file-chooser';
 import { finalize } from 'rxjs/operators';
+import { Camera, CameraOptions } from '@ionic-native/camera';
+import { FilePath } from '@ionic-native/file-path';
 
 /**
  * Generated class for the DetalleServicioPage page.
@@ -27,7 +29,7 @@ export class DetalleServicioPage {
 
   mobile: boolean;
 
-  filePath: string;
+  filePathData: string;
 
   public servicio: ServicioOptions;
 
@@ -43,7 +45,9 @@ export class DetalleServicioPage {
     public modalCtrl: ModalController,
     public plt: Platform,
     public fileChooser: FileChooser,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    private camera: Camera,
+    private filePath: FilePath
   ) {
     this.mobile = !plt.is('core');
     this.servicio = this.navParams.get('servicio');
@@ -77,8 +81,8 @@ export class DetalleServicioPage {
       };
     }
 
-    this.filePath = 'servicios/' + this.servicio.id;
-    this.servicioDoc = this.afs.doc<ServicioOptions>(this.filePath);
+    this.filePathData = 'servicios/' + this.servicio.id;
+    this.servicioDoc = this.afs.doc<ServicioOptions>(this.filePathData);
     this.servicioDoc.valueChanges().subscribe(data => {
       if (data) {
         this.servicio = data;
@@ -92,12 +96,8 @@ export class DetalleServicioPage {
 
   seleccionarImagen(event) {
     let imagen = event.target.files[0];
-    this.uploadImage(imagen);
-  }
-
-  uploadImage(file) {
-    let fileRef = this.storage.ref(this.filePath);
-    let task = this.storage.upload(this.filePath, file);
+    let fileRef = this.storage.ref(this.filePathData);
+    let task = this.storage.upload(this.filePathData, imagen);
     task.snapshotChanges().pipe(
       finalize(() => {
         fileRef.getDownloadURL().subscribe(data => {
@@ -107,8 +107,48 @@ export class DetalleServicioPage {
     ).subscribe();
   }
 
+  sacarFoto() {
+    let cameraOptions: CameraOptions = {
+      quality: 50,
+      encodingType: this.camera.EncodingType.JPEG,
+      targetWidth: 1000,
+      targetHeight: 1000,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      sourceType: this.camera.PictureSourceType.CAMERA,
+      correctOrientation: true
+    }
+
+    this.camera.getPicture(cameraOptions).then((imageData) => {
+      let imagen = "data:image/jpeg;base64," + imageData;
+      let fileRef = this.storage.ref(this.filePathData);
+      let task = fileRef.putString(this.filePathData, imagen);
+      task.snapshotChanges().pipe(
+        finalize(() => {
+          fileRef.getDownloadURL().subscribe(data => {
+            this.todo.patchValue({ imagen: data });
+          });
+        })
+      ).subscribe();
+    }, (err) => {
+      alert(err);
+    });
+  }
+
   cargarImagen() {
-    this.fileChooser.open();
+    this.fileChooser.open().then(uri => {
+      this.filePath.resolveNativePath(uri)
+        .then((imagen) => {
+          let fileRef = this.storage.ref(this.filePathData);
+          let task = this.storage.upload(this.filePathData, imagen);
+          task.snapshotChanges().pipe(
+            finalize(() => {
+              fileRef.getDownloadURL().subscribe(data => {
+                this.todo.patchValue({ imagen: data });
+              });
+            })
+          ).subscribe();
+        })
+    })
   }
 
   guardar() {
@@ -151,10 +191,10 @@ export class DetalleServicioPage {
   }
 
   eliminar() {
-    let producto = this.todo.value;
+    let servicio: ServicioOptions = this.todo.value;
     let alert = this.alertCtrl.create({
       title: 'Eliminar producto',
-      message: '¿Desea eliminar el producto ' + producto.descripcion + ' ' + producto.marca + '?',
+      message: '¿Desea eliminar el servicio ' + servicio.nombre,
       buttons: [
         {
           text: 'No',
@@ -164,7 +204,7 @@ export class DetalleServicioPage {
           text: 'Si',
           handler: () => {
             this.servicioDoc.delete().then(() => {
-              this.storage.ref(this.filePath).delete();
+              this.storage.ref(this.filePathData).delete();
               this.genericAlert('Eliminar producto', 'El producto ha sido eliminado');
             });
           }
