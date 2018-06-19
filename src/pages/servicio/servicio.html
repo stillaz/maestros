@@ -8,6 +8,12 @@
   <ion-navbar>
     <ion-title>Servicios</ion-title>
   </ion-navbar>
+
+  <ion-toolbar>
+    <ion-searchbar [(ngModel)]="busqueda" (ionInput)="filtrar()"></ion-searchbar>
+
+    <button ion-button outline (click)="filtrosGrupos()">{{grupoSeleccion}}</button>
+  </ion-toolbar>
 </ion-header>
 
 
@@ -17,17 +23,19 @@
       <ion-item-divider color="light" sticky>{{item.grupo}}</ion-item-divider>
       <ion-grid>
         <ion-row>
-          <ion-col class="cell-1" #item *ngFor="let servicio of item.servicios" class="cell-1" (click)="ver(servicio)">
+          <ion-col #item *ngFor="let servicio of item.servicios" class="cell-1" (click)="ver(servicio)">
             <img *ngIf="servicio.imagen" [src]="servicio.imagen">
             <ion-card>
-              <ion-item>
-                <h2 style="text-align: center"><strong>{{servicio.nombre}}</strong></h2>
+              <ion-card-header>
+                <ion-title>{{servicio.nombre}}</ion-title>
+              </ion-card-header>
+              <ion-card-content>
                 <p>{{servicio.descripcion}}.</p>
-              </ion-item>
-              <ion-item>
-                <p item-start>Duración: {{servicio.duracion_MIN}} min.</p>
-                <strong item-end>{{servicio.valor| currency : USD: symbol: '4.0' }}</strong>
-              </ion-item>
+                <ion-item>
+                  <p item-start>Duración: {{servicio.duracion_MIN}} min.</p>
+                  <strong item-end>{{servicio.valor| currency : USD: symbol: '4.0' }}</strong>
+                </ion-item>
+              </ion-card-content>
             </ion-card>
           </ion-col>
         </ion-row>

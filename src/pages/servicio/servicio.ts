@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController } from 'ionic-angular';
+import { IonicPage, NavController, ActionSheetController } from 'ionic-angular';
 import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { ServicioOptions } from '../../interfaces/servicio-options';
 
@@ -17,12 +17,27 @@ import { ServicioOptions } from '../../interfaces/servicio-options';
 })
 export class ServicioPage {
 
-  private serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
-  public grupoServicios: any[];
+  grupoServicios: any[];
+  grupoSeleccion: string;
+  filtro: any;
+  grupos: any[] = [];
 
-  constructor(private afs: AngularFirestore, public navCtrl: NavController) {
-    this.serviciosCollection = this.afs.collection<ServicioOptions>('servicios');
-    this.serviciosCollection.valueChanges().subscribe(data => {
+  constructor(
+    private afs: AngularFirestore,
+    public navCtrl: NavController,
+    public actionSheetCtrl: ActionSheetController
+  ) {
+    this.initialUpdate();
+  }
+
+  ionViewWillEnter() {
+    this.grupoSeleccion = 'Todos los grupos';
+  }
+
+  initialUpdate() {
+    let serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
+    serviciosCollection = this.afs.collection<ServicioOptions>('servicios');
+    serviciosCollection.valueChanges().subscribe(data => {
       if (data) {
         this.updateServicios(data);
       }
@@ -36,6 +51,9 @@ export class ServicioPage {
       let grupo = servicio.grupo;
       if (grupos[grupo] === undefined) {
         grupos[grupo] = [];
+        if (!this.grupos.some(x => x === grupo)) {
+          this.grupos.push(grupo);
+        }
       }
       grupos[grupo].push(servicio);
     });
@@ -53,6 +71,40 @@ export class ServicioPage {
     this.navCtrl.push('DetalleServicioPage', {
       servicio: servicio
     });
+  }
+
+  filtrosGrupos() {
+    let filtros: any = [];
+    filtros.push({
+      text: 'Todos los grupos', handler: () => {
+        this.initialUpdate();
+        this.filtro = null;
+        this.grupoSeleccion = 'Todos los grupos';
+      }
+    });
+
+    this.grupos.forEach(grupo => {
+      filtros.push({
+        text: grupo,
+        handler: () => {
+          let serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
+          serviciosCollection = this.afs.collection('servicios', ref => ref.where('grupo', '==', grupo));
+          serviciosCollection.valueChanges().subscribe(data => {
+            if (data) {
+              this.updateServicios(data);
+            }
+            this.grupoSeleccion = grupo;
+          });
+        }
+      });
+    });
+
+    let actionSheet = this.actionSheetCtrl.create({
+      title: 'Grupos',
+      buttons: filtros,
+      cssClass: 'actionSheet1'
+    });
+    actionSheet.present();
   }
 
 }
