@@ -8,5 +8,6 @@ export interface UsuarioOptions{
     clave: string,
     perfiles: PerfilOptions[],
     imagen: string,
+    googleUser: boolean,
     activo: boolean
 }

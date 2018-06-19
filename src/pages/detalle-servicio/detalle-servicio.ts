@@ -51,7 +51,7 @@ export class DetalleServicioPage {
   ) {
     this.mobile = !plt.is('core');
     this.servicio = this.navParams.get('servicio');
-    this.cargar();
+    this.updateServicio();
   }
 
   form() {
@@ -67,7 +67,7 @@ export class DetalleServicioPage {
     });
   }
 
-  cargar() {
+  updateServicio() {
     if (!this.servicio) {
       this.servicio = {
         id: new Date().getTime(),

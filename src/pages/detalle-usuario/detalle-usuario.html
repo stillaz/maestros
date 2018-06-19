@@ -21,30 +21,93 @@
 <ion-content padding>
   <ion-card>
     <ion-card-content>
-      <ion-item>
-        <ion-label floating>Usuario</ion-label>
-        <ion-input type="text" [(ngModel)]="datosUsuario.nombre"></ion-input>
-      </ion-item>
+      <form [formGroup]="todo">
+        <ion-item>
+          <ion-label floating>Identificación:</ion-label>
+          <ion-input type="text" formControlName="id"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label floating>Constraseña</ion-label>
-        <ion-input type="password" [(ngModel)]="datosUsuario.clave"></ion-input>
-      </ion-item>
+        <ion-item color="danger" *ngIf="todo.controls.id.errors && todo.controls.id.touched">
+          <p>La identificación no es válido</p>
+        </ion-item>
 
-      <ion-item>
-        <ion-label floating>Repita la contraseña</ion-label>
-        <ion-input type="password" [(ngModel)]="clave2"></ion-input>
-      </ion-item>
+        <ion-item>
+          <ion-label floating>Nombre:</ion-label>
+          <ion-input type="text" formControlName="nombre" maxlength="100"></ion-input>
+        </ion-item>
 
-      <ion-item>
-        <ion-label floating>Perfil</ion-label>
-        <ion-select [(ngModel)]="datosUsuario.perfil" cancelText="Cancelar" okText="Aceptar">
-          <ion-option value="Administrador">Administrador</ion-option>
-          <ion-option value="Otro">Otro</ion-option>
-        </ion-select>
-      </ion-item>
+        <ion-item color="danger" *ngIf="todo.controls.nombre.errors && todo.controls.nombre.touched">
+          <p>El nombre no es válido</p>
+        </ion-item>
 
-      <button *ngIf="editar" ion-button type="submit" block>Guardar</button>
+        <ion-item>
+          <ion-label floating>Teléfono:</ion-label>
+          <ion-textarea type="tel" formControlName="telefono" maxlength="10"></ion-textarea>
+        </ion-item>
+
+        <ion-item color="danger" *ngIf="todo.controls.telefono.errors && todo.controls.telefono.touched">
+          <p>El teléfono no es válido</p>
+        </ion-item>
+
+        <ion-item>
+          <ion-label floating>Email:</ion-label>
+          <ion-input type="email" formControlName="email" maxlength="50"></ion-input>
+        </ion-item>
+
+        <ion-item color="danger" *ngIf="todo.controls.email.errors && todo.controls.email.touched">
+          <p>El email no es válido</p>
+        </ion-item>
+
+        <ion-item>
+          <ion-label floating>Clave:</ion-label>
+          <ion-input type="password" formControlName="clave"></ion-input>
+        </ion-item>
+
+        <ion-item color="danger" *ngIf="todo.controls.valor.errors && todo.controls.valor.touched">
+          <p>La clave no es válida</p>
+        </ion-item>
+
+        <ion-item (click)="menu()">
+          <ion-label floating>Perfiles:</ion-label>
+          <ion-input type="text" disabled="true" formControlName="perfiles"></ion-input>
+        </ion-item>
+
+        <ion-item color="danger" *ngIf="todo.controls.perfiles.errors && todo.controls.perfiles.touched">
+          <p>El usuario debe tener al menos un perfil</p>
+        </ion-item>
+
+        <ion-item>
+          <img *ngIf="todo.controls.imagen.value" [src]="todo.controls.imagen.value" style="max-width:300px;" />
+        </ion-item>
+
+        <ion-item *ngIf="!mobile">
+          <ion-input type="file" accept="image/*" (change)="seleccionarImagen($event)"></ion-input>
+        </ion-item>
+
+        <ion-item style="height: 100px" *ngIf="mobile">
+          <ion-fab bottom center>
+            <button ion-fab mini>
+              <ion-icon name="image"></ion-icon>
+            </button>
+            <ion-fab-list side="left">
+              <button ion-fab (tap)="sacarFoto()">
+                <ion-icon name="camera"></ion-icon>
+              </button>
+              <button ion-fab>
+                <ion-icon name="cloud-upload" (tap)="cargarImagen()"></ion-icon>
+              </button>
+            </ion-fab-list>
+          </ion-fab>
+        </ion-item>
+
+        <button ion-button type="submit" icon-right block color="secondary" [disabled]="todo.invalid" (click)="guardar()">Guardar
+          <ion-icon name="checkmark"></ion-icon>
+        </button>
+
+        <button *ngIf="!nuevo" ion-button icon-right block color="danger" (click)="eliminar()">Eliminar
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </form>
     </ion-card-content>
   </ion-card>
 </ion-content>
