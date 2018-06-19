@@ -10,9 +10,11 @@
   </ion-navbar>
 
   <ion-toolbar>
-    <ion-searchbar [(ngModel)]="busqueda" (ionInput)="filtrar()"></ion-searchbar>
-
-    <button ion-button outline (click)="filtrosGrupos()">{{grupoSeleccion}}</button>
+    <button ion-button outline (click)="filtrosGrupos()">{{grupoSeleccion}}
+    </button>
+    <button ion-button small clear color="danger" *ngIf="grupoSeleccion !== 'Todos los grupos'" (tap)="initialUpdate()">
+      <ion-icon name="close"></ion-icon>
+    </button>
   </ion-toolbar>
 </ion-header>
 

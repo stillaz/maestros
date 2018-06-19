@@ -21,17 +21,17 @@ export class ServicioPage {
   grupoSeleccion: string;
   filtro: any;
   grupos: any[] = [];
+  busqueda: string;
 
   constructor(
     private afs: AngularFirestore,
     public navCtrl: NavController,
     public actionSheetCtrl: ActionSheetController
-  ) {
-    this.initialUpdate();
-  }
+  ) {}
 
   ionViewWillEnter() {
     this.grupoSeleccion = 'Todos los grupos';
+    this.initialUpdate();
   }
 
   initialUpdate() {
@@ -40,6 +40,7 @@ export class ServicioPage {
     serviciosCollection.valueChanges().subscribe(data => {
       if (data) {
         this.updateServicios(data);
+        this.grupoSeleccion = 'Todos los grupos';
       }
     });
   }
