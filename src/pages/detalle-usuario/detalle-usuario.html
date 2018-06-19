@@ -63,8 +63,13 @@
           <ion-input type="password" formControlName="clave"></ion-input>
         </ion-item>
 
-        <ion-item color="danger" *ngIf="todo.controls.valor.errors && todo.controls.valor.touched">
+        <ion-item color="danger" *ngIf="todo.controls.clave.errors && todo.controls.clave.touched">
           <p>La clave no es válida</p>
+        </ion-item>
+
+        <ion-item>
+          <ion-label floating>Repita la clave:</ion-label>
+          <ion-input type="password" [(ngModel)]="clave2"></ion-input>
         </ion-item>
 
         <ion-item (click)="menu()">

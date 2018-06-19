@@ -28,6 +28,7 @@ export class DetalleUsuarioPage {
   private usuarioDoc: AngularFirestoreDocument<UsuarioOptions>;
   nuevo: boolean = true;
   todo: FormGroup;
+  clave2: string;
 
   constructor(
     public navCtrl: NavController,
