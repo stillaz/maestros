@@ -19,15 +19,14 @@ export class ServicioPage {
 
   grupoServicios: any[];
   grupoSeleccion: string;
-  filtro: any;
   grupos: any[] = [];
-  busqueda: string;
 
   constructor(
     private afs: AngularFirestore,
     public navCtrl: NavController,
     public actionSheetCtrl: ActionSheetController
-  ) {}
+  ) {
+  }
 
   ionViewWillEnter() {
     this.grupoSeleccion = 'Todos los grupos';
@@ -79,7 +78,6 @@ export class ServicioPage {
     filtros.push({
       text: 'Todos los grupos', handler: () => {
         this.initialUpdate();
-        this.filtro = null;
         this.grupoSeleccion = 'Todos los grupos';
       }
     });

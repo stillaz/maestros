@@ -1,5 +1,5 @@
 <!--
-  Generated template for the DetallePerfilPage page.
+  Generated template for the DetalleProductoPage page.
 
   See http://ionicframework.com/docs/components/#navigation for more info on
   Ionic pages and navigation.
@@ -7,12 +7,62 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>detalle-perfil</ion-title>
+    <ion-title>Datos del perfil {{perfil.nombre}}</ion-title>
+    <ion-buttons start>
+      <button ion-button (click)="cerrar()">
+        <ion-icon name="md-close"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <ion-card>
+    <ion-card-content>
+      <form [formGroup]="todo">
+        <ion-item>
+          <ion-label floating>Perfil:</ion-label>
+          <ion-input type="text" formControlName="nombre" maxlength="30"></ion-input>
+        </ion-item>
 
+        <ion-item color="danger" *ngIf="todo.controls.nombre.errors && todo.controls.nombre.touched">
+          <p>El nombre del perfil no es válido</p>
+        </ion-item>
+
+        <ion-item>
+          <img *ngIf="todo.controls.imagen.value" [src]="todo.controls.imagen.value" style="max-width:300px;" />
+        </ion-item>
+
+        <ion-item *ngIf="!mobile">
+          <ion-input type="file" accept="image/*" (change)="seleccionarImagen($event)"></ion-input>
+        </ion-item>
+
+        <ion-item style="height: 100px" *ngIf="mobile">
+          <ion-fab bottom center>
+            <button ion-fab mini>
+              <ion-icon name="image"></ion-icon>
+            </button>
+            <ion-fab-list side="left">
+              <button ion-fab (tap)="sacarFoto()">
+                <ion-icon name="camera"></ion-icon>
+              </button>
+              <button ion-fab>
+                <ion-icon name="cloud-upload" (tap)="cargarImagen()"></ion-icon>
+              </button>
+            </ion-fab-list>
+          </ion-fab>
+        </ion-item>
+
+        <button ion-button type="submit" icon-right block color="secondary" [disabled]="todo.invalid" (click)="guardar()">Guardar
+          <ion-icon name="checkmark"></ion-icon>
+        </button>
+
+        <button *ngIf="!nuevo" ion-button icon-right block color="danger" (click)="eliminar()">Eliminar
+          <ion-icon name="trash"></ion-icon>
+        </button>
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

@@ -193,7 +193,7 @@ export class DetalleServicioPage {
   eliminar() {
     let servicio: ServicioOptions = this.todo.value;
     let alert = this.alertCtrl.create({
-      title: 'Eliminar producto',
+      title: 'Eliminar servicio',
       message: '¿Desea eliminar el servicio ' + servicio.nombre,
       buttons: [
         {
@@ -205,7 +205,7 @@ export class DetalleServicioPage {
           handler: () => {
             this.servicioDoc.delete().then(() => {
               this.storage.ref(this.filePathData).delete();
-              this.genericAlert('Eliminar producto', 'El producto ha sido eliminado');
+              this.genericAlert('Eliminar servicio', 'El servicio ha sido eliminado');
             });
           }
         }

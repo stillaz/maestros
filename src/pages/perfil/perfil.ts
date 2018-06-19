@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, ActionSheetController } from 'ionic-angular';
+import { AngularFirestore, AngularFirestoreCollection } from 'angularfire2/firestore';
+import { PerfilOptions } from '../../interfaces/perfil-options';
 
 /**
  * Generated class for the PerfilPage page.
@@ -15,11 +17,37 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class PerfilPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  perfiles: PerfilOptions[];
+
+  constructor(
+    private afs: AngularFirestore,
+    public navCtrl: NavController,
+    public actionSheetCtrl: ActionSheetController
+  ) {
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad PerfilPage');
+  ionViewWillEnter() {
+    this.initialUpdate();
   }
 
+  initialUpdate() {
+    let perfilCollection: AngularFirestoreCollection<PerfilOptions>;
+    perfilCollection = this.afs.collection<PerfilOptions>('perfiles');
+    perfilCollection.valueChanges().subscribe(data => {
+      if (data) {
+        this.perfiles = data;
+        console.log(data);
+      }
+    });
+  }
+
+  crear() {
+    this.navCtrl.push('DetallePerfilPage');
+  }
+
+  ver(perfil: PerfilOptions) {
+    this.navCtrl.push('DetallePerfilPage', {
+      perfil: perfil
+    });
+  }
 }
