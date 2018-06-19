@@ -204,7 +204,9 @@ export class DetalleServicioPage {
           text: 'Si',
           handler: () => {
             this.servicioDoc.delete().then(() => {
-              this.storage.ref(this.filePathData).delete();
+              if(servicio.imagen){
+                this.storage.ref(this.filePathData).delete();
+              }
               this.genericAlert('Eliminar servicio', 'El servicio ha sido eliminado');
             });
           }

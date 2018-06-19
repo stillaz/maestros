@@ -187,7 +187,9 @@ export class DetallePerfilPage {
           text: 'Si',
           handler: () => {
             this.perfilDoc.delete().then(() => {
-              this.storage.ref(this.filePathData).delete();
+              if(perfil.imagen){
+                this.storage.ref(this.filePathData).delete();
+              }
               this.genericAlert('Eliminar perfil', 'El perfil ha sido eliminado');
             });
           }

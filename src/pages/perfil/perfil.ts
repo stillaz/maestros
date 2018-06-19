@@ -24,9 +24,6 @@ export class PerfilPage {
     public navCtrl: NavController,
     public actionSheetCtrl: ActionSheetController
   ) {
-  }
-
-  ionViewWillEnter() {
     this.initialUpdate();
   }
 
@@ -36,7 +33,6 @@ export class PerfilPage {
     perfilCollection.valueChanges().subscribe(data => {
       if (data) {
         this.perfiles = data;
-        console.log(data);
       }
     });
   }

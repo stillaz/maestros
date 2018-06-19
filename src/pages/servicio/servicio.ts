@@ -26,11 +26,11 @@ export class ServicioPage {
     public navCtrl: NavController,
     public actionSheetCtrl: ActionSheetController
   ) {
+    this.initialUpdate();
   }
 
   ionViewWillEnter() {
     this.grupoSeleccion = 'Todos los grupos';
-    this.initialUpdate();
   }
 
   initialUpdate() {
