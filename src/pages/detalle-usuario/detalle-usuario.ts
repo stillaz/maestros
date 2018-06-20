@@ -1,13 +1,15 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController, Platform } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, Platform, ActionSheetController, AlertController, ViewController } from 'ionic-angular';
 import { UsuarioOptions } from '../../interfaces/usuario-options';
-import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AngularFireStorage } from 'angularfire2/storage';
 import { finalize } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { FilePath } from '@ionic-native/file-path';
 import { FileChooser } from '@ionic-native/file-chooser';
+import { PerfilOptions } from '../../interfaces/perfil-options';
+import { AngularFireAuth } from 'angularfire2/auth';
 
 /**
  * Generated class for the DetalleUsuarioPage page.
@@ -24,11 +26,10 @@ export class DetalleUsuarioPage {
 
   usuario: UsuarioOptions;
   mobile: boolean;
-  filePathData: string;
   private usuarioDoc: AngularFirestoreDocument<UsuarioOptions>;
   nuevo: boolean = true;
   todo: FormGroup;
-  clave2: string;
+  perfiles: PerfilOptions[];
 
   constructor(
     public navCtrl: NavController,
@@ -40,11 +41,16 @@ export class DetalleUsuarioPage {
     private storage: AngularFireStorage,
     private camera: Camera,
     private filePath: FilePath,
-    public fileChooser: FileChooser
+    public fileChooser: FileChooser,
+    public actionSheetCtrl: ActionSheetController,
+    public alertCtrl: AlertController,
+    public viewCtrl: ViewController,
+    private afa: AngularFireAuth
   ) {
     this.mobile = !plt.is('core');
     this.usuario = this.navParams.get('usuario');
     this.updateUsuario();
+    this.updatePerfiles();
   }
 
   updateUsuario() {
@@ -54,15 +60,13 @@ export class DetalleUsuarioPage {
         nombre: null,
         telefono: null,
         email: null,
-        clave: null,
         imagen: null,
-        googleUser: null,
         activo: true,
-        perfiles: null
+        perfiles: []
       };
     } else {
-      this.filePathData = 'usuarios/' + this.usuario.id;
-      this.usuarioDoc = this.afs.doc<UsuarioOptions>(this.filePathData);
+      let filePathData = 'usuarios/' + this.usuario.id;
+      this.usuarioDoc = this.afs.doc<UsuarioOptions>(filePathData);
       this.usuarioDoc.valueChanges().subscribe(data => {
         if (data) {
           this.usuario = data;
@@ -75,13 +79,25 @@ export class DetalleUsuarioPage {
     this.form();
   }
 
+  updatePerfiles() {
+    let perfilesCollection: AngularFirestoreCollection<PerfilOptions>;
+    perfilesCollection = this.afs.collection<PerfilOptions>('perfiles');
+    perfilesCollection.valueChanges().subscribe(data => {
+      if (data) {
+        this.perfiles = data;
+      } else {
+        this.perfiles = [];
+      }
+    });
+  }
+
   form() {
     this.todo = this.formBuilder.group({
       id: [this.usuario.id, Validators.required],
       nombre: [this.usuario.nombre, Validators.required],
       telefono: [this.usuario.telefono, Validators.required],
       email: [this.usuario.email, Validators.required],
-      clave: [this.usuario.clave, Validators.required],
+      clave: ['', Validators.required],
       perfiles: [this.usuario.perfiles, Validators.required],
       imagen: [this.usuario.imagen],
       activo: [this.usuario.activo, Validators.required]
@@ -89,9 +105,11 @@ export class DetalleUsuarioPage {
   }
 
   seleccionarImagen(event) {
+    this.usuario = this.todo.value;
+    let filePathData = 'usuarios/' + this.usuario.id;
     let imagen = event.target.files[0];
-    let fileRef = this.storage.ref(this.filePathData);
-    let task = this.storage.upload(this.filePathData, imagen);
+    let fileRef = this.storage.ref(filePathData);
+    let task = this.storage.upload(filePathData, imagen);
     task.snapshotChanges().pipe(
       finalize(() => {
         fileRef.getDownloadURL().subscribe(data => {
@@ -113,9 +131,11 @@ export class DetalleUsuarioPage {
     }
 
     this.camera.getPicture(cameraOptions).then((imageData) => {
+      this.usuario = this.todo.value;
+      let filePathData = 'usuarios/' + this.usuario.id;
       let imagen = "data:image/jpeg;base64," + imageData;
-      let fileRef = this.storage.ref(this.filePathData);
-      let task = fileRef.putString(this.filePathData, imagen);
+      let fileRef = this.storage.ref(filePathData);
+      let task = fileRef.putString(filePathData, imagen);
       task.snapshotChanges().pipe(
         finalize(() => {
           fileRef.getDownloadURL().subscribe(data => {
@@ -129,11 +149,13 @@ export class DetalleUsuarioPage {
   }
 
   cargarImagen() {
+    this.usuario = this.todo.value;
+    let filePathData = 'usuarios/' + this.usuario.id;
     this.fileChooser.open().then(uri => {
       this.filePath.resolveNativePath(uri)
         .then((imagen) => {
-          let fileRef = this.storage.ref(this.filePathData);
-          let task = this.storage.upload(this.filePathData, imagen);
+          let fileRef = this.storage.ref(filePathData);
+          let task = this.storage.upload(filePathData, imagen);
           task.snapshotChanges().pipe(
             finalize(() => {
               fileRef.getDownloadURL().subscribe(data => {
@@ -143,5 +165,39 @@ export class DetalleUsuarioPage {
           ).subscribe();
         })
     })
+  }
+
+  compareFn(p1: PerfilOptions, p2: PerfilOptions): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
+  }
+
+  guardar() {
+    let usuario = this.todo.value;
+    this.usuario = {
+      id: usuario.id,
+        nombre: usuario.nombre,
+        telefono: usuario.telefono,
+        email: usuario.email,
+        imagen: usuario.imagen,
+        activo: true,
+        perfiles: []
+    };
+    let filePathData = 'usuarios/' + this.usuario.id;
+    if (this.nuevo) {
+      this.usuarioDoc = this.afs.doc<UsuarioOptions>(filePathData);
+    }
+    this.afa.auth.createUserWithEmailAndPassword(usuario.email, usuario.clave);
+    this.usuarioDoc.set(this.usuario);
+    let alert = this.alertCtrl.create(this.nuevo ? {
+      title: 'Usuario registrado',
+      message: 'El usuario ha sido registrado exitosamente',
+      buttons: ['OK']
+    } : {
+        title: 'Usuario actualizado',
+        message: 'El usuario ha sido actualizado exitosamente',
+        buttons: ['OK']
+      });
+    alert.present();
+    this.viewCtrl.dismiss();
   }
 }

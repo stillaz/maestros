@@ -42,7 +42,7 @@
 
         <ion-item>
           <ion-label floating>Teléfono:</ion-label>
-          <ion-textarea type="tel" formControlName="telefono" maxlength="10"></ion-textarea>
+          <ion-input type="tel" formControlName="telefono" maxlength="10"></ion-input>
         </ion-item>
 
         <ion-item color="danger" *ngIf="todo.controls.telefono.errors && todo.controls.telefono.touched">
@@ -68,13 +68,10 @@
         </ion-item>
 
         <ion-item>
-          <ion-label floating>Repita la clave:</ion-label>
-          <ion-input type="password" [(ngModel)]="clave2"></ion-input>
-        </ion-item>
-
-        <ion-item (click)="menu()">
           <ion-label floating>Perfiles:</ion-label>
-          <ion-input type="text" disabled="true" formControlName="perfiles"></ion-input>
+          <ion-select formControlName="perfiles" multiple="true" [compareWith]="compareFn">
+            <ion-option *ngFor="let perfil of perfiles" [value]="perfil">{{perfil.nombre}}</ion-option>
+          </ion-select>
         </ion-item>
 
         <ion-item color="danger" *ngIf="todo.controls.perfiles.errors && todo.controls.perfiles.touched">
