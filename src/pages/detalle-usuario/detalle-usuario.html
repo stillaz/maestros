@@ -23,15 +23,6 @@
     <ion-card-content>
       <form [formGroup]="todo">
         <ion-item>
-          <ion-label floating>Identificación:</ion-label>
-          <ion-input type="text" formControlName="id"></ion-input>
-        </ion-item>
-
-        <ion-item color="danger" *ngIf="todo.controls.id.errors && todo.controls.id.touched">
-          <p>La identificación no es válido</p>
-        </ion-item>
-
-        <ion-item>
           <ion-label floating>Nombre:</ion-label>
           <ion-input type="text" formControlName="nombre" maxlength="100"></ion-input>
         </ion-item>
@@ -51,19 +42,19 @@
 
         <ion-item>
           <ion-label floating>Email:</ion-label>
-          <ion-input type="email" formControlName="email" maxlength="50"></ion-input>
+          <ion-input type="email" formControlName="email" maxlength="50" [disabled]="!nuevo"></ion-input>
         </ion-item>
 
         <ion-item color="danger" *ngIf="todo.controls.email.errors && todo.controls.email.touched">
           <p>El email no es válido</p>
         </ion-item>
 
-        <ion-item>
+        <ion-item *ngIf="nuevo">
           <ion-label floating>Clave:</ion-label>
           <ion-input type="password" formControlName="clave"></ion-input>
         </ion-item>
 
-        <ion-item color="danger" *ngIf="todo.controls.clave.errors && todo.controls.clave.touched">
+        <ion-item color="danger" *ngIf="nuevo && todo.controls.clave.errors && todo.controls.clave.touched">
           <p>La clave no es válida</p>
         </ion-item>
 
@@ -104,10 +95,6 @@
 
         <button ion-button type="submit" icon-right block color="secondary" [disabled]="todo.invalid" (click)="guardar()">Guardar
           <ion-icon name="checkmark"></ion-icon>
-        </button>
-
-        <button *ngIf="!nuevo" ion-button icon-right block color="danger" (click)="eliminar()">Eliminar
-          <ion-icon name="trash"></ion-icon>
         </button>
       </form>
     </ion-card-content>

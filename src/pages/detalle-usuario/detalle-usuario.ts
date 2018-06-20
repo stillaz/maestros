@@ -93,11 +93,11 @@ export class DetalleUsuarioPage {
 
   form() {
     this.todo = this.formBuilder.group({
-      id: [this.usuario.id, Validators.required],
+      id: [this.usuario.id],
       nombre: [this.usuario.nombre, Validators.required],
       telefono: [this.usuario.telefono, Validators.required],
       email: [this.usuario.email, Validators.required],
-      clave: ['', Validators.required],
+      clave: [''],
       perfiles: [this.usuario.perfiles, Validators.required],
       imagen: [this.usuario.imagen],
       activo: [this.usuario.activo, Validators.required]
@@ -175,29 +175,45 @@ export class DetalleUsuarioPage {
     let usuario = this.todo.value;
     this.usuario = {
       id: usuario.id,
-        nombre: usuario.nombre,
-        telefono: usuario.telefono,
-        email: usuario.email,
-        imagen: usuario.imagen,
-        activo: true,
-        perfiles: []
+      nombre: usuario.nombre,
+      telefono: usuario.telefono,
+      email: usuario.email,
+      imagen: usuario.imagen,
+      activo: true,
+      perfiles: this.todo.value.perfiles
     };
-    let filePathData = 'usuarios/' + this.usuario.id;
+
     if (this.nuevo) {
-      this.usuarioDoc = this.afs.doc<UsuarioOptions>(filePathData);
-    }
-    this.afa.auth.createUserWithEmailAndPassword(usuario.email, usuario.clave);
-    this.usuarioDoc.set(this.usuario);
-    let alert = this.alertCtrl.create(this.nuevo ? {
-      title: 'Usuario registrado',
-      message: 'El usuario ha sido registrado exitosamente',
-      buttons: ['OK']
-    } : {
+      this.afa.auth.createUserWithEmailAndPassword(usuario.email, usuario.clave).then(data => {
+        if (data) {
+          let id = data.user.uid;
+          let filePathData = 'usuarios/' + id;
+          console.log(filePathData);
+          this.usuarioDoc = this.afs.doc<UsuarioOptions>(filePathData);
+          this.usuario.id = id;
+          this.usuarioDoc.set(this.usuario);
+          let alert = this.alertCtrl.create({
+            title: 'Usuario registrado',
+            message: 'El usuario ha sido registrado exitosamente',
+            buttons: ['OK']
+          });
+          alert.present();
+          this.viewCtrl.dismiss();
+        }
+      });
+    } else {
+      this.usuarioDoc.set(this.usuario);
+      let alert = this.alertCtrl.create({
         title: 'Usuario actualizado',
         message: 'El usuario ha sido actualizado exitosamente',
         buttons: ['OK']
       });
-    alert.present();
+      alert.present();
+      this.viewCtrl.dismiss();
+    }
+  }
+
+  cerrar() {
     this.viewCtrl.dismiss();
   }
 }
