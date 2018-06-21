@@ -10,6 +10,7 @@ import { FilePath } from '@ionic-native/file-path';
 import { FileChooser } from '@ionic-native/file-chooser';
 import { PerfilOptions } from '../../interfaces/perfil-options';
 import { AngularFireAuth } from 'angularfire2/auth';
+import * as firebase from 'firebase';
 
 /**
  * Generated class for the DetalleUsuarioPage page.
@@ -186,9 +187,9 @@ export class DetalleUsuarioPage {
     if (this.nuevo) {
       this.afa.auth.createUserWithEmailAndPassword(usuario.email, usuario.clave).then(data => {
         if (data) {
+          data.linkWithRedirect(firebase.auth.GoogleAuthProvider);
           let id = data.user.uid;
           let filePathData = 'usuarios/' + id;
-          console.log(filePathData);
           this.usuarioDoc = this.afs.doc<UsuarioOptions>(filePathData);
           this.usuario.id = id;
           this.usuarioDoc.set(this.usuario);
