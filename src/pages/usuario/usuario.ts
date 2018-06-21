@@ -18,7 +18,7 @@ import { PerfilOptions } from '../../interfaces/perfil-options';
 export class UsuarioPage {
 
   usuarios: UsuarioOptions[];
-  perfilSeleccion: PerfilOptions;
+  perfilSeleccion: PerfilOptions = { id: 0, nombre: 'Todos los perfiles', imagen: null, activo: null };
   perfiles: PerfilOptions[];
 
   constructor(public navCtrl: NavController,
@@ -27,17 +27,11 @@ export class UsuarioPage {
     private afs: AngularFirestore,
     public actionSheetCtrl: ActionSheetController
   ) {
-    this.initialUpdate();
     this.updatePerfiles();
-    this.initialPerfilSeleccion();
-  }
-
-  initialPerfilSeleccion(){
-    this.perfilSeleccion = { id: 0, nombre: 'Todos los perfiles', imagen: null, activo: null };
   }
 
   ionViewDidEnter() {
-    this.initialPerfilSeleccion();
+    this.initialUpdate();
   }
 
   initialUpdate() {
@@ -46,6 +40,7 @@ export class UsuarioPage {
     usuariosCollection.valueChanges().subscribe(data => {
       if (data) {
         this.usuarios = data;
+        this.perfilSeleccion = { id: 0, nombre: 'Todos los perfiles', imagen: null, activo: null };
       }
     });
   }
