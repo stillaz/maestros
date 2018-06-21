@@ -29,6 +29,15 @@ export class UsuarioPage {
   ) {
     this.initialUpdate();
     this.updatePerfiles();
+    this.initialPerfilSeleccion();
+  }
+
+  initialPerfilSeleccion(){
+    this.perfilSeleccion = { id: 0, nombre: 'Todos los perfiles', imagen: null, activo: null };
+  }
+
+  ionViewDidEnter() {
+    this.initialPerfilSeleccion();
   }
 
   initialUpdate() {
@@ -41,7 +50,7 @@ export class UsuarioPage {
     });
   }
 
-  updatePerfiles(){
+  updatePerfiles() {
     let perfilesCollection: AngularFirestoreCollection<PerfilOptions>;
     perfilesCollection = this.afs.collection<PerfilOptions>('perfiles');
     perfilesCollection.valueChanges().subscribe(data => {
@@ -61,11 +70,11 @@ export class UsuarioPage {
     });
   }
 
-  filtrosGrupos() {
+  filtrosPerfiles() {
     let filtros: any = [];
     let todosPerfiles: PerfilOptions = { id: 0, nombre: 'Todos los perfiles', imagen: null, activo: null }
     filtros.push({
-      text: 'Todos los grupos', handler: () => {
+      text: todosPerfiles.nombre, handler: () => {
         this.initialUpdate();
         this.perfilSeleccion = todosPerfiles;
       }
@@ -76,10 +85,10 @@ export class UsuarioPage {
         text: perfil.nombre,
         handler: () => {
           let usuariosCollection: AngularFirestoreCollection<UsuarioOptions>;
-          usuariosCollection = this.afs.collection<UsuarioOptions>('usuarios', ref => ref.where('perfiles.id', '==', perfil.id));
+          usuariosCollection = this.afs.collection<UsuarioOptions>('usuarios');
           usuariosCollection.valueChanges().subscribe(data => {
             if (data) {
-              this.usuarios = data;
+              this.usuarios = data.filter(usuario => usuario.perfiles.some(item => item.id === perfil.id));
             }
             this.perfilSeleccion = perfil;
           });
