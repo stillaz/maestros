@@ -1,13 +1,14 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IonicPage, NavController, NavParams, AlertController, ViewController, ModalController, Platform } from 'ionic-angular';
-import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { AngularFireStorage } from 'angularfire2/storage';
 import { PerfilOptions } from '../../interfaces/perfil-options';
 import { FileChooser } from '@ionic-native/file-chooser';
 import { finalize } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { FilePath } from '@ionic-native/file-path';
+import { ServicioOptions } from '../../interfaces/servicio-options';
 
 /**
  * Generated class for the DetallePerfilPage page.
@@ -24,14 +25,11 @@ import { FilePath } from '@ionic-native/file-path';
 export class DetallePerfilPage {
 
   todo: FormGroup;
-
   nuevo: boolean = true;
-
   mobile: boolean;
-
   filePathData: string;
-
-  public perfil: PerfilOptions;
+  perfil: PerfilOptions;
+  servicios: ServicioOptions[];
 
   private perfilDoc: AngularFirestoreDocument<PerfilOptions>;
 
@@ -52,6 +50,7 @@ export class DetallePerfilPage {
     this.mobile = !plt.is('core');
     this.perfil = this.navParams.get('perfil');
     this.cargar();
+    this.updateServicios();
   }
 
   form() {
@@ -59,6 +58,7 @@ export class DetallePerfilPage {
       id: [this.perfil.id, Validators.required],
       nombre: [this.perfil.nombre, Validators.required],
       imagen: [this.perfil.imagen],
+      servicios: [this.perfil.servicios, Validators.required],
       activo: [this.perfil.activo, Validators.required]
     });
   }
@@ -69,6 +69,7 @@ export class DetallePerfilPage {
         id: new Date().getTime(),
         nombre: null,
         imagen: null,
+        servicios: null,
         activo: true
       };
     }
@@ -141,6 +142,22 @@ export class DetallePerfilPage {
           ).subscribe();
         })
     })
+  }
+
+  updateServicios() {
+    let serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
+    serviciosCollection = this.afs.collection<ServicioOptions>('servicios');
+    serviciosCollection.valueChanges().subscribe(data => {
+      if (data) {
+        this.servicios = data;
+      } else {
+        this.servicios = [];
+      }
+    });
+  }
+
+  compareFn(p1: ServicioOptions, p2: ServicioOptions): boolean {
+    return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
   guardar() {

@@ -10,7 +10,7 @@ import { FilePath } from '@ionic-native/file-path';
 import { FileChooser } from '@ionic-native/file-chooser';
 import { PerfilOptions } from '../../interfaces/perfil-options';
 import { AngularFireAuth } from 'angularfire2/auth';
-import * as firebase from 'firebase';
+import firebase from 'firebase';
 
 /**
  * Generated class for the DetalleUsuarioPage page.

@@ -32,6 +32,17 @@
         </ion-item>
 
         <ion-item>
+          <ion-label floating>Servicios:</ion-label>
+          <ion-select formControlName="servicios" multiple="true" [compareWith]="compareFn">
+            <ion-option *ngFor="let servicio of servicios" [value]="servicio">{{servicio.nombre}}</ion-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item color="danger" *ngIf="todo.controls.servicios.errors && todo.controls.servicios.touched">
+          <p>El usuario debe tener al menos un perfil</p>
+        </ion-item>
+
+        <ion-item>
           <img *ngIf="todo.controls.imagen.value" [src]="todo.controls.imagen.value" style="max-width:300px;" />
         </ion-item>
 
