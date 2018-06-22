@@ -66,7 +66,7 @@ export class DetallePerfilPage {
   cargar() {
     if (!this.perfil) {
       this.perfil = {
-        id: new Date().getTime(),
+        id: this.afs.createId(),
         nombre: null,
         imagen: null,
         servicios: null,

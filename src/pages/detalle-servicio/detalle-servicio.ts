@@ -70,7 +70,7 @@ export class DetalleServicioPage {
   updateServicio() {
     if (!this.servicio) {
       this.servicio = {
-        id: new Date().getTime(),
+        id: this.afs.createId(),
         nombre: null,
         descripcion: null,
         duracion_MIN: null,

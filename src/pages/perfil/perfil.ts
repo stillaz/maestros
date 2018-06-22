@@ -28,6 +28,7 @@ export class PerfilPage {
   }
 
   initialUpdate() {
+    this.afs.createId();
     let perfilCollection: AngularFirestoreCollection<PerfilOptions>;
     perfilCollection = this.afs.collection<PerfilOptions>('perfiles');
     perfilCollection.valueChanges().subscribe(data => {
