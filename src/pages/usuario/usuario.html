@@ -26,8 +26,8 @@
       </ion-thumbnail>
       <h2>{{usuario.nombre}}</h2>
 
-      <div *ngFor="let perfil of usuario.perfiles">
-        <ion-note>{{perfil.nombre}}</ion-note>
+      <div>
+        <ion-note *ngFor="let perfil of usuario.perfiles">{{perfil.nombre}} </ion-note>
       </div>
 
       <div item-end *ngFor="let perfil of usuario.perfiles">
