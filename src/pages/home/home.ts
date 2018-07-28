@@ -8,6 +8,7 @@ import { NavController } from 'ionic-angular';
 export class HomePage {
 
   pages: any[] = [
+    { title: 'Empresas', component: 'EmpresaPage', icon: 'alert' },
     { title: 'Perfiles', component: 'PerfilPage', icon: 'alert' },
     { title: 'Servicios', component: 'ServicioPage', icon: 'alert' },
     { title: 'Usuarios', component: 'UsuarioPage', icon: 'alert' }
