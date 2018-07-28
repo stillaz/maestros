@@ -83,11 +83,7 @@ export class DetalleUsuarioPage {
     let perfilesCollection: AngularFirestoreCollection<PerfilOptions>;
     perfilesCollection = this.afs.collection<PerfilOptions>('perfiles');
     perfilesCollection.valueChanges().subscribe(data => {
-      if (data) {
         this.perfiles = data;
-      } else {
-        this.perfiles = [];
-      }
     });
   }
 

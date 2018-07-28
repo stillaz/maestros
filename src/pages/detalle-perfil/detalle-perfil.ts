@@ -58,7 +58,7 @@ export class DetallePerfilPage {
       id: [this.perfil.id, Validators.required],
       nombre: [this.perfil.nombre, Validators.required],
       imagen: [this.perfil.imagen],
-      servicios: [this.perfil.servicios, Validators.required],
+      servicios: [this.perfil.servicios],
       activo: [this.perfil.activo, Validators.required]
     });
   }
