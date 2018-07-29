@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { NavController, NavParams } from 'ionic-angular';
+import { AngularFirestoreDocument, AngularFirestore } from '../../../node_modules/angularfire2/firestore';
+import { EmpresaOptions } from '../../interfaces/empresa-options';
 
 @Component({
   selector: 'page-home',
@@ -14,11 +16,25 @@ export class HomePage {
     { title: 'Usuarios', component: 'UsuarioPage', icon: 'alert' }
   ];
 
-  constructor(public navCtrl: NavController) {
+  empresaDoc: AngularFirestoreDocument<EmpresaOptions>;
+  empresa: EmpresaOptions;
 
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private afs: AngularFirestore
+  ) {
+    let idnegocio = this.navParams.get('id');
+    this.empresaDoc = this.afs.doc('negocios/' + idnegocio);
   }
 
-  openPage(page){
+  updateNegocio() {
+    this.empresaDoc.valueChanges().subscribe(data => {
+      this.empresa = data;
+    });
+  }
+
+  openPage(page) {
     this.navCtrl.push(page.component);
   }
 

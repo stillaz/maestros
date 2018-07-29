@@ -14,6 +14,19 @@
 
 
 <ion-content padding>
+
+  <ion-list *ngFor="let negocio of empresas">
+    <ion-item (click)="ver(negocio.id)">
+      <ion-thumbnail item-start>
+        <img *ngIf="negocio.imagen" [src]="negocio.imagen">
+      </ion-thumbnail>
+      <h2>{{negocio.nombre}}</h2>
+      <p>Teléfono {{negocio.telefono}}. Dirección: {{negocio.direccion.direccion}}.</p>
+      <p> Representante: {{negocio.nombreRepresentante}}. Teléfono: {{negocio.telefonoRepresentante}}. Email: {{negocio.correoRepresentante}}</p>
+      <ion-note>{{negocio.negocio}}</ion-note>
+    </ion-item>
+  </ion-list>
+
   <ion-fab right bottom>
     <button ion-fab (tap)="crear()">
       <ion-icon name="add"></ion-icon>

@@ -1,0 +1,50 @@
+<!--
+  Generated template for the MenuEmpresaPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+
+  <ion-navbar *ngIf="empresa">
+    <ion-title>{{empresa.negocio}} {{empresa.nombre}}</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list *ngIf="empresa">
+    <br/>
+    <ion-card>
+      <ion-card-header>
+        {{empresa.direccion.direccion}}.
+        <br/> Teléfono: {{empresa.telefono}}
+      </ion-card-header>
+
+      <img *ngIf="empresa.imagen" [src]="empresa.imagen">
+
+      <ion-card-content>
+        <p> Representante: {{empresa.nombreRepresentante}}. Teléfono: {{empresa.telefonoRepresentante}}. Email: {{empresa.correoRepresentante}}</p>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list *ngFor="let grupo of opciones">
+      <ion-item-group>
+        <ion-item-divider color="light">
+          <ion-item color="light">
+            <h2>
+              <b>{{grupo.grupo}}</b>
+            </h2>
+            <button ion-button small icon-only item-end round (click)="crear(grupo.grupo)">
+              <ion-icon name="add"></ion-icon>
+            </button>
+          </ion-item>
+        </ion-item-divider>
+        <ion-item *ngFor="let dato of datos">
+          {{dato}}
+        </ion-item>
+      </ion-item-group>
+    </ion-list>
+  </ion-list>
+</ion-content>

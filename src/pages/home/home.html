@@ -1,15 +1,23 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Maestros
+      {{negocio.nombre}}
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
-  <ion-list>
-    <button ion-item *ngFor="let p of pages" (click)="openPage(p)">
-      {{p.title}}
-      </button>
-  </ion-list>
+  <ion-card>
+    <ion-item>
+      <h2>{{negocio.nombre}}</h2>
+      <p>{{negocio.direccion.direccion}}.</p>
+      <p>Teléfono: {{negocio.telefono}}</p>
+    </ion-item>
+  </ion-card>
+
+  <img *ngIf="negocio.imagen" [src]="negocio.imagen">
+
+  <ion-card-content>
+    <p> Representante: {{negocio.nombreRepresentante}}. Teléfono: {{negocio.telefonoRepresentante}}. Email: {{negocio.correoRepresentante}}</p>
+  </ion-card-content>
 </ion-content>

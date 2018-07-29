@@ -12,7 +12,6 @@ import { FileChooser } from '@ionic-native/file-chooser';
 import { FilePath } from '@ionic-native/file-path';
 
 import { MyApp } from './app.component';
-import { HomePage } from '../pages/home/home';
 import { firebaseConfig } from './firebase.config';
 import { Geolocation } from '@ionic-native/geolocation';
 import { MapPage } from '../pages/map/map';
@@ -20,7 +19,6 @@ import { MapPage } from '../pages/map/map';
 @NgModule({
   declarations: [
     MyApp,
-    HomePage,
     MapPage
   ],
   imports: [
@@ -34,7 +32,6 @@ import { MapPage } from '../pages/map/map';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage,
     MapPage
   ],
   providers: [
@@ -44,7 +41,7 @@ import { MapPage } from '../pages/map/map';
     Camera,
     FilePath,
     Geolocation,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
-export class AppModule {}
+export class AppModule { }

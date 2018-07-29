@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { AngularFirestoreCollection, AngularFirestore } from '../../../node_modules/angularfire2/firestore';
+import { EmpresaOptions } from '../../interfaces/empresa-options';
 
 /**
  * Generated class for the EmpresaPage page.
@@ -15,11 +17,32 @@ import { IonicPage, NavController, NavParams } from 'ionic-angular';
 })
 export class EmpresaPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  empresasCollection: AngularFirestoreCollection<EmpresaOptions>;
+  empresas: EmpresaOptions[];
+
+  constructor(
+    public navCtrl: NavController,
+    public navParams: NavParams,
+    private afs: AngularFirestore
+  ) {
+    this.empresasCollection = this.afs.collection<EmpresaOptions>('negocios');
+    this.updateEmpresas();
   }
 
-  crear(){
+  updateEmpresas() {
+    this.empresasCollection.valueChanges().subscribe(data => {
+      this.empresas = data;
+    });
+  }
+
+  crear() {
     this.navCtrl.push('DetalleEmpresaPage');
+  }
+
+  ver(id: string) {
+    this.navCtrl.push('MenuEmpresaPage', {
+      idempresa: id
+    });
   }
 
 }
