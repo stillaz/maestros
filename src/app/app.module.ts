@@ -14,11 +14,14 @@ import { FilePath } from '@ionic-native/file-path';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { firebaseConfig } from './firebase.config';
+import { Geolocation } from '@ionic-native/geolocation';
+import { MapPage } from '../pages/map/map';
 
 @NgModule({
   declarations: [
     MyApp,
-    HomePage
+    HomePage,
+    MapPage
   ],
   imports: [
     BrowserModule,
@@ -31,7 +34,8 @@ import { firebaseConfig } from './firebase.config';
   bootstrap: [IonicApp],
   entryComponents: [
     MyApp,
-    HomePage
+    HomePage,
+    MapPage
   ],
   providers: [
     StatusBar,
@@ -39,6 +43,7 @@ import { firebaseConfig } from './firebase.config';
     FileChooser,
     Camera,
     FilePath,
+    Geolocation,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

@@ -18,4 +18,8 @@ export class EmpresaPage {
   constructor(public navCtrl: NavController, public navParams: NavParams) {
   }
 
+  crear(){
+    this.navCtrl.push('DetalleEmpresaPage');
+  }
+
 }

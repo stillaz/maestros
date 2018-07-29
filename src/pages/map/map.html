@@ -1,0 +1,18 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Ubicación de negocio
+    </ion-title>
+
+    <ion-buttons start>
+      <button ion-button (click)="cerrar()">
+        <ion-icon name="md-close"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div #map id="map"></div>
+  <button id="my_button" ion-button (tap)="guardar()">Continuar</button>
+</ion-content>

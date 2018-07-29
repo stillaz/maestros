@@ -7,12 +7,113 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>detalle-empresa</ion-title>
+    <ion-title>Datos de la empresa</ion-title>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
+  <ion-list>
+    <form [formGroup]="todo">
+      <ion-item>
+        <ion-label floating>Negocio:</ion-label>
+        <ion-select formControlName="negocio">
+          <ion-option *ngFor="let negocio of negocios" [value]="negocio">{{negocio}}</ion-option>
+        </ion-select>
+      </ion-item>
 
+      <ion-item color="danger" *ngIf="todo.controls.negocio.errors && todo.controls.negocio.touched">
+        <p>Debe seleccionar un negocio</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Nombre de empresa:</ion-label>
+        <ion-input type="text" formControlName="nombre" maxlength="100"></ion-input>
+      </ion-item>
+
+      <ion-item color="danger" *ngIf="todo.controls.nombre.errors && todo.controls.nombre.touched">
+        <p>El nombre no es válido</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Teléfono:</ion-label>
+        <ion-input type="tel" formControlName="telefono" maxlength="10"></ion-input>
+      </ion-item>
+
+      <ion-item color="danger" *ngIf="todo.controls.telefono.errors && todo.controls.telefono.touched">
+        <p>El teléfono no es válido</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label stacked>Dirección del negocio:</ion-label>
+        <ion-input type="text" formControlName="direccion" disabled="true"></ion-input>
+        <button ion-button small (click)="maps()" outline item-end [disabled]="!todo.value.negocio">
+          <ion-icon name="locate"></ion-icon>
+        </button>
+      </ion-item>
+
+      <ion-item color="danger" *ngIf="todo.controls.direccion.errors && todo.controls.direccion.touched">
+        <p>El teléfono del representante no es válido</p>
+      </ion-item>
+
+      <ion-item style="text-align: center" *ngIf="todo.controls.imagen.value">
+        <img [src]="todo.controls.imagen.value" style="max-width:300px;" />
+      </ion-item>
+
+      <ion-item *ngIf="!mobile">
+        <ion-input type="file" accept="image/*" (change)="seleccionarImagen($event)"></ion-input>
+      </ion-item>
+
+      <ion-item style="height: 100px" *ngIf="mobile">
+        <ion-fab bottom center>
+          <button ion-fab mini>
+            <ion-icon name="image"></ion-icon>
+          </button>
+          <ion-fab-list side="right">
+            <button ion-fab (tap)="sacarFoto()">
+              <ion-icon name="camera"></ion-icon>
+            </button>
+          </ion-fab-list>
+          <ion-fab-list side="left">
+            <button ion-fab>
+              <ion-icon name="cloud-upload" (tap)="cargarImagen()"></ion-icon>
+            </button>
+          </ion-fab-list>
+        </ion-fab>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Nombre del representante:</ion-label>
+        <ion-input type="text" formControlName="nombreRepresentante" maxlength="100"></ion-input>
+      </ion-item>
+
+      <ion-item color="danger" *ngIf="todo.controls.nombreRepresentante.errors && todo.controls.nombreRepresentante.touched">
+        <p>El nombre del representante no es válido</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Teléfono o celular del representante:</ion-label>
+        <ion-input type="tel" formControlName="telefonoRepresentante" maxlength="10"></ion-input>
+      </ion-item>
+
+      <ion-item color="danger" *ngIf="todo.controls.telefonoRepresentante.errors && todo.controls.telefonoRepresentante.touched">
+        <p>El teléfono del representante no es válido</p>
+      </ion-item>
+
+      <ion-item>
+        <ion-label floating>Email:</ion-label>
+        <ion-input type="email" formControlName="correoRepresentante" maxlength="50"></ion-input>
+      </ion-item>
+
+      <ion-item color="danger" *ngIf="todo.controls.correoRepresentante.errors && todo.controls.correoRepresentante.touched">
+        <p>El email no es válido</p>
+      </ion-item>
+    </form>
+  </ion-list>
+
+  <button ion-button type="submit" icon-right block color="secondary" [disabled]="todo.invalid" (click)="guardar()" block>
+    Guardar
+    <ion-icon name="checkmark"></ion-icon>
+  </button>
 </ion-content>
