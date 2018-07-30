@@ -44,7 +44,6 @@ export class DetalleEmpresaPage {
   ) {
     this.updateNegocios();
     this.updateEmpresa();
-    this.updateMapa();
   }
 
   updateNegocios() {
@@ -75,16 +74,6 @@ export class DetalleEmpresaPage {
     });
   }
 
-  updateMapa() {
-    this.mapa = this.modalCtrl.create(MapPage);
-    this.mapa.onDidDismiss(data => {
-      if (data) {
-        this.empresa.direccion = data;
-        this.todo.patchValue({ direccion: this.empresa.direccion.direccion });
-      }
-    });
-  }
-
   form() {
     this.todo = this.formBuilder.group({
       negocio: [this.empresa.negocio, Validators.required],
@@ -99,6 +88,15 @@ export class DetalleEmpresaPage {
   }
 
   maps() {
+    this.mapa = this.modalCtrl.create(MapPage, {
+      negocio: this.todo.value.negocio
+    });
+    this.mapa.onDidDismiss(data => {
+      if (data) {
+        this.empresa.direccion = data;
+        this.todo.patchValue({ direccion: this.empresa.direccion.direccion });
+      }
+    });
     this.mapa.present();
   }
 
