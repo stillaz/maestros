@@ -4,11 +4,10 @@ import { IonicPage, NavController, NavParams, AlertController, ViewController, M
 import { AngularFirestore, AngularFirestoreDocument, AngularFirestoreCollection } from 'angularfire2/firestore';
 import { AngularFireStorage } from 'angularfire2/storage';
 import { PerfilOptions } from '../../interfaces/perfil-options';
-import { FileChooser } from '@ionic-native/file-chooser';
 import { finalize } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/camera';
-import { FilePath } from '@ionic-native/file-path';
 import { ServicioOptions } from '../../interfaces/servicio-options';
+import firebase from 'firebase';
 
 /**
  * Generated class for the DetallePerfilPage page.
@@ -30,6 +29,7 @@ export class DetallePerfilPage {
   filePathData: string;
   perfil: PerfilOptions;
   servicios: ServicioOptions[];
+  idempresa: string;
 
   private perfilDoc: AngularFirestoreDocument<PerfilOptions>;
 
@@ -42,12 +42,11 @@ export class DetallePerfilPage {
     private formBuilder: FormBuilder,
     public modalCtrl: ModalController,
     public plt: Platform,
-    public fileChooser: FileChooser,
     private storage: AngularFireStorage,
     private camera: Camera,
-    private filePath: FilePath
   ) {
     this.mobile = !plt.is('core');
+    this.idempresa = this.navParams.get('idempresa');
     this.perfil = this.navParams.get('perfil');
     this.cargar();
     this.updateServicios();
@@ -70,11 +69,12 @@ export class DetallePerfilPage {
         nombre: null,
         imagen: null,
         servicios: null,
-        activo: true
+        activo: true,
+        idempresa: this.idempresa
       };
     }
 
-    this.filePathData = 'perfiles/' + this.perfil.id;
+    this.filePathData = 'negocios/' + this.idempresa + '/perfiles/' + this.perfil.id;
     this.perfilDoc = this.afs.doc<PerfilOptions>(this.filePathData);
     this.perfilDoc.valueChanges().subscribe(data => {
       if (data) {
@@ -85,19 +85,6 @@ export class DetallePerfilPage {
     });
 
     this.form();
-  }
-
-  seleccionarImagen(event) {
-    let imagen = event.target.files[0];
-    let fileRef = this.storage.ref(this.filePathData);
-    let task = this.storage.upload(this.filePathData, imagen);
-    task.snapshotChanges().pipe(
-      finalize(() => {
-        fileRef.getDownloadURL().subscribe(data => {
-          this.todo.patchValue({ imagen: data });
-        });
-      })
-    ).subscribe();
   }
 
   sacarFoto() {
@@ -114,39 +101,51 @@ export class DetallePerfilPage {
     this.camera.getPicture(cameraOptions).then((imageData) => {
       let imagen = "data:image/jpeg;base64," + imageData;
       let fileRef = this.storage.ref(this.filePathData);
-      let task = fileRef.putString(this.filePathData, imagen);
-      task.snapshotChanges().pipe(
-        finalize(() => {
-          fileRef.getDownloadURL().subscribe(data => {
-            this.todo.patchValue({ imagen: data });
-          });
-        })
-      ).subscribe();
-    }, (err) => {
-      alert(err);
-    });
+      fileRef.putString(imagen, firebase.storage.StringFormat.DATA_URL).then(() => {
+        fileRef.getDownloadURL().subscribe(data => {
+          this.todo.patchValue({ imagen: data });
+        });
+      });
+    }).catch(err => alert('Upload Failed' + err));
   }
 
   cargarImagen() {
-    this.fileChooser.open().then(uri => {
-      this.filePath.resolveNativePath(uri)
-        .then((imagen) => {
-          let fileRef = this.storage.ref(this.filePathData);
-          let task = this.storage.upload(this.filePathData, imagen);
-          task.snapshotChanges().pipe(
-            finalize(() => {
-              fileRef.getDownloadURL().subscribe(data => {
-                this.todo.patchValue({ imagen: data });
-              });
-            })
-          ).subscribe();
-        })
-    })
+    let cameraOptions: CameraOptions = {
+      quality: 50,
+      encodingType: this.camera.EncodingType.JPEG,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+      mediaType: this.camera.MediaType.PICTURE,
+      correctOrientation: true
+    }
+
+    this.camera.getPicture(cameraOptions).then((imageData) => {
+      let imagen = "data:image/jpeg;base64," + imageData;
+      let fileRef = this.storage.ref(this.filePathData);
+      fileRef.putString(imagen, firebase.storage.StringFormat.DATA_URL).then(() => {
+        fileRef.getDownloadURL().subscribe(data => {
+          this.todo.patchValue({ imagen: data });
+        });
+      });
+    }).catch(err => alert('Upload Failed' + err));
+  }
+
+  seleccionarImagen(event) {
+    let imagen = event.target.files[0];
+    let fileRef = this.storage.ref(this.filePathData);
+    let task = this.storage.upload(this.filePathData, imagen);
+    task.snapshotChanges().pipe(
+      finalize(() => {
+        fileRef.getDownloadURL().subscribe(data => {
+          this.todo.patchValue({ imagen: data });
+        });
+      })
+    ).subscribe();
   }
 
   updateServicios() {
     let serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
-    serviciosCollection = this.afs.collection<ServicioOptions>('servicios');
+    serviciosCollection = this.afs.collection<ServicioOptions>('negocios/' + this.idempresa + '/servicios');
     serviciosCollection.valueChanges().subscribe(data => {
       if (data) {
         this.servicios = data;

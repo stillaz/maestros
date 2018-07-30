@@ -7,5 +7,6 @@ export interface ServicioOptions {
     valor: number,
     grupo: string,
     imagen: string,
-    activo: boolean
+    activo: boolean,
+    idempresa: string
 }

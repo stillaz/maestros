@@ -25,13 +25,13 @@
       <img *ngIf="empresa.imagen" [src]="empresa.imagen">
 
       <ion-card-content>
-        <p> Representante: {{empresa.nombreRepresentante}}. Teléfono: {{empresa.telefonoRepresentante}}. Email: {{empresa.correoRepresentante}}</p>
+        <p>Representante: {{empresa.nombreRepresentante}}. Teléfono: {{empresa.telefonoRepresentante}}. Email: {{empresa.correoRepresentante}}</p>
       </ion-card-content>
     </ion-card>
 
-    <ion-list *ngFor="let grupo of opciones">
-      <ion-item-group>
-        <ion-item-divider color="light">
+    <ion-list>
+      <ion-item-group *ngFor="let grupo of opciones">
+        <ion-item-divider color="light" sticky>
           <ion-item color="light">
             <h2>
               <b>{{grupo.grupo}}</b>
@@ -41,8 +41,8 @@
             </button>
           </ion-item>
         </ion-item-divider>
-        <ion-item *ngFor="let dato of datos">
-          {{dato}}
+        <ion-item *ngFor="let dato of grupo.datos" (click)="ver(grupo.grupo, dato)">
+          {{dato.nombre}}
         </ion-item>
       </ion-item-group>
     </ion-list>

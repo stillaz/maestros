@@ -7,5 +7,6 @@ export interface UsuarioOptions{
     email: string,
     perfiles: PerfilOptions[],
     imagen: string,
-    activo: boolean
+    activo: boolean,
+    idempresa: string
 }

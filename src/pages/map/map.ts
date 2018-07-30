@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
-import { NavController, Platform, ViewController } from 'ionic-angular';
+import { NavController, Platform, ViewController, NavParams } from 'ionic-angular';
 import { Geolocation } from '@ionic-native/geolocation';
 
 declare var google: any;
@@ -15,13 +15,21 @@ export class MapPage {
   marker: any;
   geocoder: any;
   infowindow: any;
+  imagen: string;
 
   constructor(
     public navCtrl: NavController,
     public platform: Platform,
     private geolocation: Geolocation,
-    public viewCtrl: ViewController
+    public viewCtrl: ViewController,
+    public navParams: NavParams
   ) {
+    let negocio = this.navParams.get('negocio');
+    switch (negocio) {
+      case 'Barbería':
+        this.imagen = 'assets/imgs/barberia-mark.png';
+        break;
+    }
     platform.ready().then(() => {
       this.initMap();
     });
@@ -48,7 +56,6 @@ export class MapPage {
 
     watch.subscribe((data) => {
       let updatelocation = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
-      //let image = 'assets/imgs/blue-bike.png';
       this.geoCode(updatelocation);
     });
   }
@@ -56,7 +63,7 @@ export class MapPage {
   geoCode(location) {
     this.geocoder.geocode({ 'location': location }, (results, status) => {
       if (status === 'OK') {
-        this.setMarker(location, null);
+        this.setMarker(location);
         if (results[0]) {
           this.infowindow.setContent(results[0].formatted_address);
           this.infowindow.open(this.map, this.marker);
@@ -71,11 +78,11 @@ export class MapPage {
     });
   }
 
-  setMarker(location, image) {
+  setMarker(location) {
     this.marker = new google.maps.Marker({
       position: location,
       map: this.map,
-      icon: image
+      icon: this.imagen
     });
 
     this.showMap(this.map);
