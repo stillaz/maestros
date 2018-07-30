@@ -31,6 +31,7 @@ export class DetalleUsuarioPage {
   perfiles: PerfilOptions[];
   filePathData: string;
   idempresa: string;
+  private filePathPerfiles: string;
 
   constructor(
     public navCtrl: NavController,
@@ -46,6 +47,7 @@ export class DetalleUsuarioPage {
     public viewCtrl: ViewController,
     private afa: AngularFireAuth
   ) {
+    this.idempresa = this.navParams.get('idempresa');
     this.mobile = !plt.is('core');
     this.usuario = this.navParams.get('usuario');
     this.updateUsuario();
@@ -64,24 +66,24 @@ export class DetalleUsuarioPage {
         perfiles: [],
         idempresa: this.idempresa
       };
-    } else {
-      this.filePathData = 'negocios/' + this.idempresa + '/usuarios/' + this.usuario.id;
-      this.usuarioDoc = this.afs.doc<UsuarioOptions>(this.filePathData);
-      this.usuarioDoc.valueChanges().subscribe(data => {
-        if (data) {
-          this.usuario = data;
-
-          this.nuevo = false;
-        }
-      });
     }
+    this.filePathPerfiles = this.idempresa ? 'negocios/' + this.idempresa + '/perfiles' : 'perfiles/';
+    this.filePathData = this.idempresa ? 'negocios/' + this.idempresa + '/usuarios/' + this.usuario.id : 'usuarios/' + this.usuario.id;
+    this.usuarioDoc = this.afs.doc<UsuarioOptions>(this.filePathData);
+    this.usuarioDoc.valueChanges().subscribe(data => {
+      if (data) {
+        this.usuario = data;
+
+        this.nuevo = false;
+      }
+    });
 
     this.form();
   }
 
   updatePerfiles() {
     let perfilesCollection: AngularFirestoreCollection<PerfilOptions>;
-    perfilesCollection = this.afs.collection<PerfilOptions>('perfiles');
+    perfilesCollection = this.afs.collection<PerfilOptions>(this.filePathPerfiles);
     perfilesCollection.valueChanges().subscribe(data => {
       this.perfiles = data;
     });
@@ -160,6 +162,31 @@ export class DetalleUsuarioPage {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
+  private registrar() {
+    let batch = this.afs.firestore.batch();
+    let filePathData = this.idempresa ? 'negocios/' + this.idempresa + '/usuarios/' + this.usuario.id : 'usuarios/' + this.usuario.id;
+    let usuarioDoc = this.afs.doc<UsuarioOptions>(filePathData);
+    let filePathDataGeneral = 'usuarios/' + this.usuario.id;
+    let usuarioGeneralDoc = this.afs.doc<UsuarioOptions>(filePathDataGeneral);
+
+    batch.set(usuarioDoc.ref, this.usuario);
+    batch.set(usuarioGeneralDoc.ref, this.usuario);
+
+    batch.commit().then(() => {
+      let alert = this.nuevo ? this.alertCtrl.create({
+        title: 'Usuario registrado',
+        message: 'El usuario ha sido registrado exitosamente',
+        buttons: ['OK']
+      }) : this.alertCtrl.create({
+        title: 'Usuario actualizado',
+        message: 'El usuario ha sido actualizado exitosamente',
+        buttons: ['OK']
+      });
+      alert.present();
+      this.viewCtrl.dismiss();
+    });
+  }
+
   guardar() {
     let usuario = this.todo.value;
     this.usuario = {
@@ -176,29 +203,19 @@ export class DetalleUsuarioPage {
     if (this.nuevo) {
       this.afa.auth.createUserWithEmailAndPassword(usuario.email, usuario.clave).then(data => {
         if (data) {
-          let id = data.user.uid;
-          let filePathData = 'usuarios/' + id;
-          this.usuarioDoc = this.afs.doc<UsuarioOptions>(filePathData);
-          this.usuario.id = id;
-          this.usuarioDoc.set(this.usuario);
-          let alert = this.alertCtrl.create({
-            title: 'Usuario registrado',
-            message: 'El usuario ha sido registrado exitosamente',
-            buttons: ['OK']
-          });
-          alert.present();
-          this.viewCtrl.dismiss();
+          this.usuario.id = data.user.uid;
+          this.registrar();
         }
-      });
+      }).catch(err => this.alertCtrl.create({
+        title: 'Nuevo usuario',
+        message: err,
+        buttons: [{
+          text: 'OK',
+          role: 'cancel'
+        }]
+      }).present());
     } else {
-      this.usuarioDoc.set(this.usuario);
-      let alert = this.alertCtrl.create({
-        title: 'Usuario actualizado',
-        message: 'El usuario ha sido actualizado exitosamente',
-        buttons: ['OK']
-      });
-      alert.present();
-      this.viewCtrl.dismiss();
+      this.registrar();
     }
   }
 

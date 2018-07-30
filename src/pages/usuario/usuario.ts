@@ -24,7 +24,9 @@ export class UsuarioPage {
     imagen: null,
     servicios: null,
     activo: null,
-    idempresa: null
+    idempresa: null,
+    negocio: null,
+    grupo: null
   };
   perfiles: PerfilOptions[];
 
@@ -53,7 +55,9 @@ export class UsuarioPage {
           imagen: null,
           servicios: null,
           activo: null,
-          idempresa: null
+          idempresa: null,
+          grupo: null,
+          negocio: null
         };
       }
     });
@@ -87,7 +91,9 @@ export class UsuarioPage {
       imagen: null,
       servicios: null,
       activo: null,
-      idempresa: null
+      idempresa: null,
+      grupo: null,
+      negocio: null
     }
     filtros.push({
       text: todosPerfiles.nombre, handler: () => {

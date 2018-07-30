@@ -20,6 +20,11 @@ export class EmpresaPage {
   empresasCollection: AngularFirestoreCollection<EmpresaOptions>;
   empresas: EmpresaOptions[];
 
+  pages = [
+    { title: 'Servicios', component: 'ServicioPage', icon: 'timer' },
+    { title: 'Perfiles', component: 'PerfilPage', icon: 'contacts' }
+  ];
+
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
@@ -43,6 +48,10 @@ export class EmpresaPage {
     this.navCtrl.push('MenuEmpresaPage', {
       idempresa: id
     });
+  }
+
+  irA(page: string) {
+    this.navCtrl.push(page);
   }
 
 }

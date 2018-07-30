@@ -6,5 +6,7 @@ export interface PerfilOptions{
     imagen: string,
     servicios: ServicioOptions[],
     activo: boolean,
-    idempresa: string
+    idempresa: string,
+    grupo: string[],
+    negocio: string[]
 }

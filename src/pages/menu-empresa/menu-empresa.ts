@@ -74,29 +74,41 @@ export class MenuEmpresaPage {
 
   updateDataPredeterminado(grupo) {
     return new Promise<any[]>(resolve => {
-      this.afs.collection<any>(grupo).valueChanges().subscribe(data => {
-        resolve(data);
+      this.afs.collection<any>(grupo).valueChanges().subscribe(opciones => {
+        let resultado = opciones ? opciones.filter(opcion => opcion.negocio.find(negocio => negocio == this.empresa.negocio)) : null;
+        resolve(resultado);
       });
     });
   }
 
   agregarPredeterminados(grupo: string) {
     this.updateDataPredeterminado(grupo).then(data => {
-      let batch = this.afs.firestore.batch();
-      data.forEach(opcion => {
-        let opcionDoc = this.empresaDoc.collection(grupo).doc(opcion.id);
-        batch.set(opcionDoc.ref, opcion);
-      });
+      if (data && data[0]) {
+        let batch = this.afs.firestore.batch();
+        data.forEach(opcion => {
+          let opcionDoc = this.empresaDoc.collection(grupo).doc(opcion.id);
+          opcion.idempresa = this.empresa.id;
+          batch.set(opcionDoc.ref, opcion);
+        });
 
-      batch.commit().then(() => {
+        batch.commit().then(() => {
+          this.alertCtrl.create({
+            title: grupo + ' registrados',
+            message: 'Se ha registrado los ' + grupo,
+            buttons: [{
+              text: 'OK'
+            }],
+          }).present();
+        });
+      } else {
         this.alertCtrl.create({
-          title: grupo + 's registrados',
-          message: 'Se ha registrado los ' + grupo + 's.',
+          title: 'Registrar ' + grupo,
+          message: 'No hay ' + grupo + 'registrados para ' + this.empresa.negocio,
           buttons: [{
             text: 'OK'
           }],
         }).present();
-      });
+      }
     });
   }
 
@@ -175,6 +187,80 @@ export class MenuEmpresaPage {
         });
         break;
       }
+    }
+  }
+
+  private actualizarServicioPerfil(idperfil, servicios) {
+    this.empresaDoc.collection('perfiles/').doc(idperfil).update({ servicios: servicios }).then(() => {
+      this.alertCtrl.create({
+        title: 'Perfil actualizado',
+        message: 'Se ha registrado los servicios al perfil',
+        buttons: [{
+          text: 'OK'
+        }],
+      }).present();
+    });
+  }
+
+  private agregarServiciosAlert(perfil) {
+    let agregarServiciosAlert = this.alertCtrl.create();
+    agregarServiciosAlert.setTitle('Agregar servicios');
+    agregarServiciosAlert.setMessage('Selecciona los servicios para agregar al perfil');
+    this.opciones[0].datos.forEach(servicios => {
+      agregarServiciosAlert.addInput({
+        type: 'checkbox',
+        label: servicios.nombre,
+        value: servicios,
+        checked: perfil.servicios.some(servicio => servicio.id === servicios.id)
+      });
+    });
+
+    agregarServiciosAlert.addButton({
+      text: 'Cancelar',
+      role: 'cancel'
+    });
+
+    agregarServiciosAlert.addButton({
+      text: 'Guardar',
+      handler: data => {
+        this.actualizarServicioPerfil(perfil.id, data);
+      }
+    });
+
+    agregarServiciosAlert.present();
+  }
+
+  serviciosPerfil(dato) {
+    if (!dato.servicios || !dato.servicios[0]) {
+      this.alertCtrl.create({
+        title: 'Agregar servicios',
+        message: '¿Desea agregar los servicios predefinidos para el perfil?',
+        buttons: [{
+          text: 'No',
+          handler: () => {
+            if (this.opciones[0].datos[0]) {
+              this.agregarServiciosAlert(dato);
+            }
+          }
+        }, {
+          text: 'Si',
+          handler: () => {
+            this.updateDataPredeterminado('servicios').then(data => {
+              let servicios = [];
+              dato.grupo.forEach(grupoPerfil => {
+                let encontrados = data.filter(servicio =>
+                  servicio.grupo.some(grupo => grupo === grupoPerfil)
+                );
+                servicios.push.apply(servicios, encontrados);
+              });
+
+              this.actualizarServicioPerfil(dato.id, servicios);
+            });
+          }
+        }]
+      }).present();
+    } else {
+      this.agregarServiciosAlert(dato);
     }
   }
 

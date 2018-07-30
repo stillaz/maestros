@@ -7,14 +7,18 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Empresas</ion-title>
+    <ion-row>
+      <button ion-button menuToggle icon-only>
+        <ion-icon name='menu'></ion-icon>
+      </button>
+      <ion-title>Empresas</ion-title>
+    </ion-row>
   </ion-navbar>
 
 </ion-header>
 
 
 <ion-content padding>
-
   <ion-list *ngFor="let negocio of empresas">
     <ion-item (click)="ver(negocio.id)">
       <ion-thumbnail item-start>
@@ -27,9 +31,28 @@
     </ion-item>
   </ion-list>
 
+  <ion-menu [content]="content">
+    <ion-header>
+      <ion-toolbar color="primary">
+        <ion-title>Maestros</ion-title>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <ion-list>
+        <button menuClose ion-item *ngFor="let page of pages" #item (click)="irA(page.component)">
+          <ion-icon name="page.icon"></ion-icon>
+          {{page.title}}
+        </button>
+      </ion-list>
+    </ion-content>
+  </ion-menu>
+
   <ion-fab right bottom>
     <button ion-fab (tap)="crear()">
       <ion-icon name="add"></ion-icon>
     </button>
   </ion-fab>
 </ion-content>
+
+<ion-nav #content></ion-nav>

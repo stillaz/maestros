@@ -29,6 +29,8 @@ export class DetalleServicioPage {
   public servicio: ServicioOptions;
   private servicioDoc: AngularFirestoreDocument<ServicioOptions>;
   idempresa: string;
+  negocios: string[];
+  grupos: string[];
 
   constructor(
     public navCtrl: NavController,
@@ -45,7 +47,25 @@ export class DetalleServicioPage {
     this.mobile = !plt.is('core');
     this.idempresa = this.navParams.get('idempresa');
     this.servicio = this.navParams.get('servicio');
+    this.updateGrupos();
+    this.updateNegocios();
     this.updateServicio();
+  }
+
+  updateGrupos() {
+    this.afs.doc<any>('clases/Grupos').valueChanges().subscribe(data => {
+      if (data) {
+        this.grupos = data.data;
+      }
+    });
+  }
+
+  updateNegocios() {
+    this.afs.doc<any>('clases/Negocios').valueChanges().subscribe(data => {
+      if (data) {
+        this.negocios = data.data;
+      }
+    });
   }
 
   form() {
@@ -55,9 +75,9 @@ export class DetalleServicioPage {
       descripcion: [this.servicio.descripcion, Validators.required],
       duracion_MIN: [this.servicio.duracion_MIN, Validators.required],
       valor: [this.servicio.valor, Validators.required],
-      grupo: [this.servicio.grupo],
+      grupo: [this.servicio.grupo, Validators.required],
       imagen: [this.servicio.imagen],
-      activo: [this.servicio.activo, Validators.required]
+      negocio: [this.servicio.negocio, Validators.required]
     });
   }
 
@@ -72,11 +92,12 @@ export class DetalleServicioPage {
         grupo: null,
         imagen: null,
         activo: true,
-        idempresa: this.idempresa
+        idempresa: null,
+        negocio: null
       };
     }
 
-    this.filePathData = 'negocios/' + this.idempresa + '/servicios/' + this.servicio.id;
+    this.filePathData = this.idempresa ? 'negocios/' + this.idempresa + '/servicios/' + this.servicio.id : 'servicios/' + this.servicio.id;
     this.servicioDoc = this.afs.doc<ServicioOptions>(this.filePathData);
     this.servicioDoc.valueChanges().subscribe(data => {
       if (data) {
@@ -147,6 +168,9 @@ export class DetalleServicioPage {
 
   guardar() {
     this.servicio = this.todo.value;
+    if (this.idempresa) {
+      this.servicio.idempresa = this.idempresa
+    }
     this.servicioDoc.set(this.servicio);
     let alert = this.alertCtrl.create({
       title: 'Servicio registrado',
@@ -155,15 +179,6 @@ export class DetalleServicioPage {
     });
     alert.present();
     this.viewCtrl.dismiss();
-  }
-
-  menu() {
-    let grupo = this.todo.value.grupo;
-    let menu = this.modalCtrl.create('GruposServicioPage', { grupo: grupo });
-    menu.present();
-    menu.onDidDismiss(data => {
-      this.todo.patchValue({ grupo: data });
-    });
   }
 
   cerrar() {

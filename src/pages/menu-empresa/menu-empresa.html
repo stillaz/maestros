@@ -15,7 +15,6 @@
 
 <ion-content padding>
   <ion-list *ngIf="empresa">
-    <br/>
     <ion-card>
       <ion-card-header>
         {{empresa.direccion.direccion}}.
@@ -41,8 +40,18 @@
             </button>
           </ion-item>
         </ion-item-divider>
-        <ion-item *ngFor="let dato of grupo.datos" (click)="ver(grupo.grupo, dato)">
+        <ion-item *ngFor="let dato of grupo.datos">
           {{dato.nombre}}
+          <ion-buttons item-end>
+            <button ion-button color="danger" outline small *ngIf="grupo.grupo === 'Perfiles' && dato.nombre !== 'Administrador'" (click)="serviciosPerfil(dato)"
+              [disabled]="!opciones[0].datos || !opciones[0].datos[0]">
+              Servicios
+            </button>
+
+            <button ion-button color="dark" only-icon large clear (click)="ver(grupo.grupo, dato)">
+              <ion-icon name="eye"></ion-icon>
+            </button>
+          </ion-buttons>
         </ion-item>
       </ion-item-group>
     </ion-list>

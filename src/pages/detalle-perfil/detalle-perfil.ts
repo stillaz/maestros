@@ -30,6 +30,9 @@ export class DetallePerfilPage {
   perfil: PerfilOptions;
   servicios: ServicioOptions[];
   idempresa: string;
+  grupos: string[];
+  negocios: string[];
+  filePathServicios: string;
 
   private perfilDoc: AngularFirestoreDocument<PerfilOptions>;
 
@@ -48,8 +51,25 @@ export class DetallePerfilPage {
     this.mobile = !plt.is('core');
     this.idempresa = this.navParams.get('idempresa');
     this.perfil = this.navParams.get('perfil');
+    this.updateGrupos();
+    this.updateNegocios();
     this.cargar();
-    this.updateServicios();
+  }
+
+  updateGrupos() {
+    this.afs.doc<any>('clases/Grupos').valueChanges().subscribe(data => {
+      if (data) {
+        this.grupos = data.data;
+      }
+    });
+  }
+
+  updateNegocios() {
+    this.afs.doc<any>('clases/Negocios').valueChanges().subscribe(data => {
+      if (data) {
+        this.negocios = data.data;
+      }
+    });
   }
 
   form() {
@@ -58,7 +78,8 @@ export class DetallePerfilPage {
       nombre: [this.perfil.nombre, Validators.required],
       imagen: [this.perfil.imagen],
       servicios: [this.perfil.servicios],
-      activo: [this.perfil.activo, Validators.required]
+      grupo: [this.perfil.grupo, Validators.required],
+      negocio: [this.perfil.negocio, Validators.required]
     });
   }
 
@@ -70,11 +91,15 @@ export class DetallePerfilPage {
         imagen: null,
         servicios: null,
         activo: true,
-        idempresa: this.idempresa
+        idempresa: null,
+        grupo: null,
+        negocio: null
       };
     }
 
-    this.filePathData = 'negocios/' + this.idempresa + '/perfiles/' + this.perfil.id;
+    this.filePathData = this.idempresa ? 'negocios/' + this.idempresa + '/perfiles/' + this.perfil.id : 'perfiles/' + this.perfil.id;
+    this.filePathServicios = this.idempresa ? 'negocios/' + this.idempresa + '/servicios/' : 'servicios/';
+    this.updateServicios();
     this.perfilDoc = this.afs.doc<PerfilOptions>(this.filePathData);
     this.perfilDoc.valueChanges().subscribe(data => {
       if (data) {
@@ -145,7 +170,7 @@ export class DetallePerfilPage {
 
   updateServicios() {
     let serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
-    serviciosCollection = this.afs.collection<ServicioOptions>('negocios/' + this.idempresa + '/servicios');
+    serviciosCollection = this.afs.collection<ServicioOptions>(this.filePathServicios);
     serviciosCollection.valueChanges().subscribe(data => {
       if (data) {
         this.servicios = data;
@@ -161,12 +186,20 @@ export class DetallePerfilPage {
 
   guardar() {
     this.perfil = this.todo.value;
+    if (this.idempresa) {
+      this.perfil.idempresa = this.idempresa;
+    }
     this.perfilDoc.set(this.perfil);
-    let alert = this.alertCtrl.create({
+    let alert = this.nuevo ? this.alertCtrl.create({
       title: 'Perfil registrado',
       message: 'El perfil ha sido registrado exitosamente',
       buttons: ['OK']
-    });
+    }) : this.alertCtrl.create({
+      title: 'Perfil actualizado',
+      message: 'El perfil ha sido actualizado exitosamente',
+      buttons: ['OK']
+    });;
+
     alert.present();
     this.viewCtrl.dismiss();
   }

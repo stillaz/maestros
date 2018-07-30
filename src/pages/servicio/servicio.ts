@@ -20,6 +20,7 @@ export class ServicioPage {
   grupoServicios: any[];
   grupoSeleccion: string;
   grupos: any[] = [];
+  servicios: ServicioOptions[];
 
   constructor(
     private afs: AngularFirestore,
@@ -37,29 +38,34 @@ export class ServicioPage {
     let serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
     serviciosCollection = this.afs.collection<ServicioOptions>('servicios');
     serviciosCollection.valueChanges().subscribe(data => {
+      this.servicios = data;
+      this.grupoServicios = [];
       if (data) {
-        this.updateServicios(data);
+        this.loadGrupos().then(grupos => {
+          if (grupos) {
+            grupos.forEach(grupo => {
+              this.updateServicios(grupo);
+            });
+          }
+        });
         this.grupoSeleccion = 'Todos los grupos';
       }
     });
   }
 
-  updateServicios(servicios: ServicioOptions[]) {
-    let grupos = [];
-    this.grupoServicios = [];
-    servicios.forEach(servicio => {
-      let grupo = servicio.grupo;
-      if (grupos[grupo] === undefined) {
-        grupos[grupo] = [];
-        if (!this.grupos.some(x => x === grupo)) {
-          this.grupos.push(grupo);
-        }
-      }
-      grupos[grupo].push(servicio);
+  loadGrupos() {
+    return new Promise<string[]>(resolve => {
+      this.afs.doc<any>('clases/Grupos').valueChanges().subscribe(data => {
+        resolve(data ? data.data : null);
+      });
     });
+  }
 
-    for (let grupo in grupos) {
-      this.grupoServicios.push({ grupo: grupo, servicios: grupos[grupo] });
+  updateServicios(grupo) {
+    let serviciosEncontrados = this.servicios.filter(servicio => servicio.grupo.find(grupoServicio => grupoServicio === grupo));
+    if (serviciosEncontrados[0]) {
+      if (!this.grupos.find(item => item === grupo)) this.grupos.push(grupo);
+      this.grupoServicios.push({ grupo: grupo, servicios: serviciosEncontrados });
     }
   }
 
@@ -86,14 +92,9 @@ export class ServicioPage {
       filtros.push({
         text: grupo,
         handler: () => {
-          let serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
-          serviciosCollection = this.afs.collection('servicios', ref => ref.where('grupo', '==', grupo));
-          serviciosCollection.valueChanges().subscribe(data => {
-            if (data) {
-              this.updateServicios(data);
-            }
-            this.grupoSeleccion = grupo;
-          });
+          this.grupoServicios = [];
+          this.updateServicios(grupo);
+          this.grupoSeleccion = grupo;
         }
       });
     });
