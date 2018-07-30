@@ -8,8 +8,6 @@ import { AngularFireModule } from 'angularfire2';
 import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { AngularFireAuthModule } from 'angularfire2/auth';
 import { AngularFireStorageModule } from 'angularfire2/storage';
-import { FileChooser } from '@ionic-native/file-chooser';
-import { FilePath } from '@ionic-native/file-path';
 
 import { MyApp } from './app.component';
 import { firebaseConfig } from './firebase.config';
@@ -37,9 +35,7 @@ import { MapPage } from '../pages/map/map';
   providers: [
     StatusBar,
     SplashScreen,
-    FileChooser,
     Camera,
-    FilePath,
     Geolocation,
     { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
