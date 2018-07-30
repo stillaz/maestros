@@ -18,7 +18,14 @@ import { PerfilOptions } from '../../interfaces/perfil-options';
 export class UsuarioPage {
 
   usuarios: UsuarioOptions[];
-  perfilSeleccion: PerfilOptions = { id: null, nombre: 'Todos los perfiles', imagen: null, servicios: null, activo: null };
+  perfilSeleccion: PerfilOptions = {
+    id: null,
+    nombre: 'Todos los perfiles',
+    imagen: null,
+    servicios: null,
+    activo: null,
+    idempresa: null
+  };
   perfiles: PerfilOptions[];
 
   constructor(public navCtrl: NavController,
@@ -40,7 +47,14 @@ export class UsuarioPage {
     usuariosCollection.valueChanges().subscribe(data => {
       if (data) {
         this.usuarios = data;
-        this.perfilSeleccion = { id: null, nombre: 'Todos los perfiles', imagen: null, servicios: null, activo: null };
+        this.perfilSeleccion = {
+          id: null,
+          nombre: 'Todos los perfiles',
+          imagen: null,
+          servicios: null,
+          activo: null,
+          idempresa: null
+        };
       }
     });
   }
@@ -67,7 +81,14 @@ export class UsuarioPage {
 
   filtrosPerfiles() {
     let filtros: any = [];
-    let todosPerfiles: PerfilOptions = { id: null, nombre: 'Todos los perfiles', imagen: null, servicios: null, activo: null }
+    let todosPerfiles: PerfilOptions = {
+      id: null,
+      nombre: 'Todos los perfiles',
+      imagen: null,
+      servicios: null,
+      activo: null,
+      idempresa: null
+    }
     filtros.push({
       text: todosPerfiles.nombre, handler: () => {
         this.initialUpdate();
