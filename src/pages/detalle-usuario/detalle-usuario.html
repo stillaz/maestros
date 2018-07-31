@@ -58,14 +58,14 @@
           <p>La clave no es válida</p>
         </ion-item>
 
-        <ion-item>
+        <ion-item *ngIf="idempresa !== 'DIS'">
           <ion-label floating>Perfiles:</ion-label>
           <ion-select formControlName="perfiles" multiple="true" [compareWith]="compareFn">
             <ion-option *ngFor="let perfil of perfiles" [value]="perfil">{{perfil.nombre}}</ion-option>
           </ion-select>
         </ion-item>
 
-        <ion-item color="danger" *ngIf="todo.controls.perfiles.errors && todo.controls.perfiles.touched">
+        <ion-item color="danger" *ngIf="idempresa !== 'DIS' && todo.controls.perfiles.errors && todo.controls.perfiles.touched">
           <p>El usuario debe tener al menos un perfil</p>
         </ion-item>
 

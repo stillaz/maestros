@@ -45,7 +45,7 @@ export class UsuarioPage {
 
   initialUpdate() {
     let usuariosCollection: AngularFirestoreCollection<UsuarioOptions>;
-    usuariosCollection = this.afs.collection<UsuarioOptions>('usuarios');
+    usuariosCollection = this.afs.collection<UsuarioOptions>('usuarios', ref => ref.where('idempresa', '==', 'DIS'));
     usuariosCollection.valueChanges().subscribe(data => {
       if (data) {
         this.usuarios = data;
@@ -74,7 +74,9 @@ export class UsuarioPage {
   }
 
   crear() {
-    this.navCtrl.push('DetalleUsuarioPage');
+    this.navCtrl.push('DetalleUsuarioPage', {
+      idempresa: 'DIS'
+    });
   }
 
   ver(usuario: UsuarioOptions) {

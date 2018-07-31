@@ -66,6 +66,19 @@ export class DetalleUsuarioPage {
         perfiles: [],
         idempresa: this.idempresa
       };
+
+      if (this.usuario.idempresa === 'DIS') {
+        this.usuario.perfiles = [{
+          activo: true,
+          grupo: ['SA'],
+          id: 'SA',
+          idempresa: 'DIS',
+          imagen: null,
+          negocio: ['DIS'],
+          nombre: 'SA',
+          servicios: null,
+        }]
+      }
     }
     this.filePathPerfiles = this.idempresa ? 'negocios/' + this.idempresa + '/perfiles' : 'perfiles/';
     this.filePathData = this.idempresa ? 'negocios/' + this.idempresa + '/usuarios/' + this.usuario.id : 'usuarios/' + this.usuario.id;

@@ -1,5 +1,6 @@
+import { ConfiguracionOptions } from "./configuracion-options";
 
-export interface EmpresaOptions{
+export interface EmpresaOptions {
     id: string,
     nombre: string,
     telefono: string,
@@ -8,5 +9,6 @@ export interface EmpresaOptions{
     negocio: string,
     nombreRepresentante: string,
     telefonoRepresentante: string,
-    correoRepresentante: string
+    correoRepresentante: string,
+    configuracion: ConfiguracionOptions
 }

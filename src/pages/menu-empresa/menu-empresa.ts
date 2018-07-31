@@ -36,37 +36,69 @@ export class MenuEmpresaPage {
     this.updateNegocio();
     this.opciones = [
       {
+        grupo: 'Horarios',
+        datos: [],
+        page: 'HorarioPage'
+      },
+      {
         grupo: 'Servicios',
-        datos: []
+        datos: [],
+        page: 'DetalleServicioPage'
       },
       {
         grupo: 'Perfiles',
-        datos: []
+        datos: [],
+        page: 'DetallePerfilPage'
       },
       {
         grupo: 'Usuarios',
-        datos: []
+        datos: [],
+        page: 'DetalleUsuarioPage'
       },
     ]
+  }
+
+  configurarHorario() {
+    if (this.empresa && !this.empresa.configuracion) {
+      this.alertCtrl.create({
+        title: 'Configuración de horarios',
+        message: '¿El negocio no tiene un horario configurado, desea asignarlo?',
+        buttons: [{
+          text: 'No',
+          role: 'cancel'
+        }, {
+          text: 'Si',
+          handler: () => {
+            this.navCtrl.push('HorarioPage', {
+              idempresa: this.empresa.id
+            });
+          }
+        }]
+      }).present();
+    }
   }
 
   updateNegocio() {
     this.empresaDoc.valueChanges().subscribe(data => {
       this.empresa = data;
       if (data) {
+        if (!this.empresa.configuracion) {
+          this.configurarHorario();
+        }
+
         this.servicioCollecion = this.empresaDoc.collection('servicios');
         this.servicioCollecion.valueChanges().subscribe(servicios => {
-          this.opciones[0].datos = servicios;
+          this.opciones[1].datos = servicios;
         });
 
         this.perfilCollecion = this.empresaDoc.collection('perfiles');
         this.perfilCollecion.valueChanges().subscribe(perfiles => {
-          this.opciones[1].datos = perfiles;
+          this.opciones[2].datos = perfiles;
         });
 
         this.usuarioCollecion = this.empresaDoc.collection('usuarios');
         this.usuarioCollecion.valueChanges().subscribe(usuarios => {
-          this.opciones[2].datos = usuarios;
+          this.opciones[3].datos = usuarios;
         });
       }
     });
@@ -112,43 +144,19 @@ export class MenuEmpresaPage {
     });
   }
 
-  irA(grupo) {
-    switch (grupo) {
-      case 'Servicios': {
-        this.navCtrl.push('DetalleServicioPage', {
-          idempresa: this.empresa.id
-        });
-        break;
-      }
-
-      case 'Perfiles': {
-        this.navCtrl.push('DetallePerfilPage', {
-          idempresa: this.empresa.id
-        });
-        break;
-      }
-
-      case 'Usuarios': {
-        this.navCtrl.push('DetalleUsuarioPage', {
-          idempresa: this.empresa.id
-        });
-        break;
-      }
-    }
-  }
-
-  crear(grupo: string) {
-    let col = grupo.toLowerCase();
-    if (grupo === 'Usuarios') {
-      this.irA(grupo);
-    } else if (this.opciones.find(opcion => opcion.grupo === grupo).datos.length === 0) {
+  crear(grupo) {
+    let nombreGrupo = grupo.grupo;
+    let col = nombreGrupo.toLowerCase();
+    if (nombreGrupo === 'Usuarios') {
+      this.ver(grupo.page, null);
+    } else if (this.opciones.find(opcion => opcion.grupo === nombreGrupo).datos.length === 0) {
       this.alertCtrl.create({
         title: 'Agregar ' + col,
         message: '¿Desea agregar los ' + col + ' predefinidos?',
         buttons: [{
           text: 'No',
           handler: () => {
-            this.irA(grupo);
+            this.ver(grupo.page, null);
           }
         }, {
           text: 'Si',
@@ -158,36 +166,15 @@ export class MenuEmpresaPage {
         }]
       }).present();
     } else {
-      this.irA(grupo);
+      this.ver(grupo.page, null);
     }
   }
 
-  ver(grupo: string, data) {
-    switch (grupo) {
-      case 'Servicios': {
-        this.navCtrl.push('DetalleServicioPage', {
-          idempresa: this.empresa.id,
-          servicio: data
-        });
-        break;
-      }
-
-      case 'Perfiles': {
-        this.navCtrl.push('DetallePerfilPage', {
-          idempresa: this.empresa.id,
-          perfil: data
-        });
-        break;
-      }
-
-      case 'Usuarios': {
-        this.navCtrl.push('DetalleUsuarioPage', {
-          idempresa: this.empresa.id,
-          usuario: data
-        });
-        break;
-      }
-    }
+  ver(grupo, data) {
+    this.navCtrl.push(grupo.page, {
+      idempresa: this.empresa.id,
+      servicio: data
+    });
   }
 
   private actualizarServicioPerfil(idperfil, servicios) {
@@ -206,7 +193,7 @@ export class MenuEmpresaPage {
     let agregarServiciosAlert = this.alertCtrl.create();
     agregarServiciosAlert.setTitle('Agregar servicios');
     agregarServiciosAlert.setMessage('Selecciona los servicios para agregar al perfil');
-    this.opciones[0].datos.forEach(servicios => {
+    this.opciones[1].datos.forEach(servicios => {
       agregarServiciosAlert.addInput({
         type: 'checkbox',
         label: servicios.nombre,
@@ -238,7 +225,7 @@ export class MenuEmpresaPage {
         buttons: [{
           text: 'No',
           handler: () => {
-            if (this.opciones[0].datos[0]) {
+            if (this.opciones[1].datos[0]) {
               this.agregarServiciosAlert(dato);
             }
           }
@@ -262,6 +249,12 @@ export class MenuEmpresaPage {
     } else {
       this.agregarServiciosAlert(dato);
     }
+  }
+
+  editar() {
+    this.navCtrl.push('DetalleEmpresaPage', {
+      empresa: this.empresa
+    });
   }
 
 }

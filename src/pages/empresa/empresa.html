@@ -40,9 +40,14 @@
 
     <ion-content>
       <ion-list>
-        <button menuClose ion-item *ngFor="let page of pages" #item (click)="irA(page.component)">
-          <ion-icon name="page.icon"></ion-icon>
+        <button menuClose ion-item *ngFor="let page of pages" (click)="irA(page.component)">
+          <ion-icon [name]="page.icon"></ion-icon>
           {{page.title}}
+        </button>
+
+        <button menuClose ion-item (click)="salir()">
+          <ion-icon name="exit"></ion-icon>
+          Salir
         </button>
       </ion-list>
     </ion-content>

@@ -42,6 +42,7 @@ export class DetalleEmpresaPage {
     private storage: AngularFireStorage,
     public alertCtrl: AlertController
   ) {
+    this.empresa = this.navParams.get('empresa');
     this.updateNegocios();
     this.updateEmpresa();
   }

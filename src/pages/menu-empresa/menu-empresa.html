@@ -26,6 +26,11 @@
       <ion-card-content>
         <p>Representante: {{empresa.nombreRepresentante}}. Teléfono: {{empresa.telefonoRepresentante}}. Email: {{empresa.correoRepresentante}}</p>
       </ion-card-content>
+
+      <button ion-button icon-left outline small color="danger">
+        <ion-icon name="create"></ion-icon>
+        Editar
+      </button>
     </ion-card>
 
     <ion-list>
@@ -35,8 +40,11 @@
             <h2>
               <b>{{grupo.grupo}}</b>
             </h2>
-            <button ion-button small icon-only item-end round (click)="crear(grupo.grupo)">
+            <button ion-button small icon-only item-end round *ngIf="grupo.grupo !== 'Horarios'" (click)="crear(grupo)">
               <ion-icon name="add"></ion-icon>
+            </button>
+            <button ion-button icon-only item-end round clear *ngIf="grupo.grupo === 'Horarios'" (click)="crear(grupo)">
+              <ion-icon name="eye"></ion-icon>
             </button>
           </ion-item>
         </ion-item-divider>
@@ -44,11 +52,11 @@
           {{dato.nombre}}
           <ion-buttons item-end>
             <button ion-button color="danger" outline small *ngIf="grupo.grupo === 'Perfiles' && dato.nombre !== 'Administrador'" (click)="serviciosPerfil(dato)"
-              [disabled]="!opciones[0].datos || !opciones[0].datos[0]">
+              [disabled]="!opciones[1].datos || !opciones[1].datos[0]">
               Servicios
             </button>
 
-            <button ion-button color="dark" only-icon large clear (click)="ver(grupo.grupo, dato)">
+            <button ion-button color="dark" only-icon large clear (click)="ver(grupo, dato)">
               <ion-icon name="eye"></ion-icon>
             </button>
           </ion-buttons>
