@@ -27,7 +27,7 @@
         <p>Representante: {{empresa.nombreRepresentante}}. Teléfono: {{empresa.telefonoRepresentante}}. Email: {{empresa.correoRepresentante}}</p>
       </ion-card-content>
 
-      <button ion-button icon-left outline small color="danger">
+      <button ion-button icon-left outline small color="danger" (click)="editar()">
         <ion-icon name="create"></ion-icon>
         Editar
       </button>

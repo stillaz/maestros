@@ -43,6 +43,7 @@ export class DetalleEmpresaPage {
     public alertCtrl: AlertController
   ) {
     this.empresa = this.navParams.get('empresa');
+    this.form();
     this.updateNegocios();
     this.updateEmpresa();
   }

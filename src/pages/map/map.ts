@@ -16,6 +16,8 @@ export class MapPage {
   geocoder: any;
   infowindow: any;
   imagen: string;
+  watch: any;
+  inicial: boolean = true;
 
   constructor(
     public navCtrl: NavController,
@@ -36,25 +38,27 @@ export class MapPage {
   }
 
   initMap() {
-    this.geolocation.getCurrentPosition().then((resp) => {
-      this.geocoder = new google.maps.Geocoder;
-      this.infowindow = new google.maps.InfoWindow;
-      let mylocation = new google.maps.LatLng(resp.coords.latitude, resp.coords.longitude);
-      this.map = new google.maps.Map(this.mapElement.nativeElement, {
-        zoom: 15,
-        center: mylocation,
-        streetViewControl: false,
-        mapTypeControl: false
-      });
+    this.geocoder = new google.maps.Geocoder;
+    this.infowindow = new google.maps.InfoWindow;
+    let watch = this.geolocation.watchPosition();
+
+    this.watch = watch.subscribe((data) => {
+      let mylocation = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
+      if (this.inicial) {
+        this.map = new google.maps.Map(this.mapElement.nativeElement, {
+          zoom: 15,
+          center: mylocation,
+          streetViewControl: false,
+          mapTypeControl: false
+        });
+        this.inicial = false;
+      }
 
       this.map.addListener('click', data => {
         this.showMap(null);
         this.geoCode(data.latLng);
       });
-    });
-    let watch = this.geolocation.watchPosition();
 
-    watch.subscribe((data) => {
       let updatelocation = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
       this.geoCode(updatelocation);
     });
@@ -93,6 +97,7 @@ export class MapPage {
   }
 
   guardar() {
+    this.watch.unsubscribe();
     this.viewCtrl.dismiss({
       latLng: { latitude: this.marker.position.lat(), longitude: this.marker.position.lng() },
       direccion: this.infowindow.content
@@ -100,6 +105,7 @@ export class MapPage {
   }
 
   cerrar() {
+    this.watch.unsubscribe();
     this.viewCtrl.dismiss();
   }
 
