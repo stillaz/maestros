@@ -148,7 +148,7 @@ export class MenuEmpresaPage {
     let nombreGrupo = grupo.grupo;
     let col = nombreGrupo.toLowerCase();
     if (nombreGrupo === 'Usuarios') {
-      this.ver(grupo.page, null);
+      this.ver(grupo, null);
     } else if (this.opciones.find(opcion => opcion.grupo === nombreGrupo).datos.length === 0) {
       this.alertCtrl.create({
         title: 'Agregar ' + col,
@@ -156,7 +156,7 @@ export class MenuEmpresaPage {
         buttons: [{
           text: 'No',
           handler: () => {
-            this.ver(grupo.page, null);
+            this.ver(grupo, null);
           }
         }, {
           text: 'Si',
@@ -166,14 +166,14 @@ export class MenuEmpresaPage {
         }]
       }).present();
     } else {
-      this.ver(grupo.page, null);
+      this.ver(grupo, null);
     }
   }
 
   ver(grupo, data) {
     this.navCtrl.push(grupo.page, {
       idempresa: this.empresa.id,
-      servicio: data
+      data: data
     });
   }
 

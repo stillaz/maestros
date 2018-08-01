@@ -46,7 +46,7 @@ export class DetalleServicioPage {
   ) {
     this.mobile = !plt.is('core');
     this.idempresa = this.navParams.get('idempresa');
-    this.servicio = this.navParams.get('servicio');
+    this.servicio = this.navParams.get('data');
     this.updateGrupos();
     this.updateNegocios();
     this.updateServicio();

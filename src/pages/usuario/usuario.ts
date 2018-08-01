@@ -81,7 +81,7 @@ export class UsuarioPage {
 
   ver(usuario: UsuarioOptions) {
     this.navCtrl.push('DetalleUsuarioPage', {
-      usuario: usuario
+      data: usuario
     });
   }
 

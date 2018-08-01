@@ -24,9 +24,6 @@ export class MyApp {
           afs.doc<UsuarioOptions>('usuarios/' + user.uid).valueChanges().subscribe(data => {
             if (data && data.perfiles.some(perfil => perfil.nombre === 'SA')) {
               this.rootPage = 'EmpresaPage';
-            } else {
-              afa.auth.signOut();
-              alert('Usuario no encontrado');
             }
           });
         } else {

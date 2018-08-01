@@ -50,7 +50,7 @@ export class DetallePerfilPage {
   ) {
     this.mobile = !plt.is('core');
     this.idempresa = this.navParams.get('idempresa');
-    this.perfil = this.navParams.get('perfil');
+    this.perfil = this.navParams.get('data');
     this.updateGrupos();
     this.updateNegocios();
     this.cargar();

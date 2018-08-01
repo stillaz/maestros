@@ -62,6 +62,7 @@ export class ServicioPage {
   }
 
   updateServicios(grupo) {
+    console.log(this.servicios);
     let serviciosEncontrados = this.servicios.filter(servicio => servicio.grupo.find(grupoServicio => grupoServicio === grupo));
     if (serviciosEncontrados[0]) {
       if (!this.grupos.find(item => item === grupo)) this.grupos.push(grupo);

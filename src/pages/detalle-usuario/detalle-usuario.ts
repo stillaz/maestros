@@ -49,7 +49,7 @@ export class DetalleUsuarioPage {
   ) {
     this.idempresa = this.navParams.get('idempresa');
     this.mobile = !plt.is('core');
-    this.usuario = this.navParams.get('usuario');
+    this.usuario = this.navParams.get('data');
     this.updateUsuario();
     this.updatePerfiles();
   }
