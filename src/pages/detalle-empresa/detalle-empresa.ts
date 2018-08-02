@@ -43,7 +43,6 @@ export class DetalleEmpresaPage {
     public alertCtrl: AlertController
   ) {
     this.empresa = this.navParams.get('empresa');
-    this.form();
     this.updateNegocios();
     this.updateEmpresa();
   }
@@ -62,7 +61,6 @@ export class DetalleEmpresaPage {
       this.empresa = {} as EmpresaOptions;
       this.empresa.direccion = {} as DireccionOptions;
       this.empresa.id = this.afs.createId();
-      this.form();
     }
     this.filePathData = 'negocios/' + this.empresa.id;
     this.empresaDoc = this.afs.doc<EmpresaOptions>(this.filePathData);
@@ -74,6 +72,8 @@ export class DetalleEmpresaPage {
         this.form();
       }
     });
+
+    this.form();
   }
 
   form() {
