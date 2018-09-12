@@ -39,7 +39,7 @@ export class EmpresaPage {
 
   updateEmpresas() {
     this.empresasCollection.valueChanges().subscribe(data => {
-      this.empresas = data;
+      this.empresas = data.filter(empresa => empresa.id !== 'DIS');
     });
   }
 
