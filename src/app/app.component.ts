@@ -2,15 +2,15 @@ import { Component } from '@angular/core';
 import { Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
-import { AngularFirestore } from '../../node_modules/angularfire2/firestore';
-import { AngularFireAuth } from '../../node_modules/angularfire2/auth';
+import { AngularFirestore } from 'angularfire2/firestore';
+import { AngularFireAuth } from 'angularfire2/auth';
 import { UsuarioOptions } from '../interfaces/usuario-options';
 
 @Component({
   templateUrl: 'app.html'
 })
 export class MyApp {
-  rootPage: any = 'EmpresaPage';
+  rootPage: any = 'LogueoPage';
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, afa: AngularFireAuth, afs: AngularFirestore) {
     platform.ready().then(() => {
@@ -24,6 +24,9 @@ export class MyApp {
           afs.doc<UsuarioOptions>('usuarios/' + user.uid).valueChanges().subscribe(data => {
             if (data && data.perfiles.some(perfil => perfil.nombre === 'SA')) {
               this.rootPage = 'EmpresaPage';
+            } else {
+              alert('No fue posible conectar con el servidor.');
+              this.rootPage = 'LogueoPage';
             }
           });
         } else {

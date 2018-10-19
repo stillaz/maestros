@@ -54,7 +54,9 @@ export class EmpresaPage {
   }
 
   irA(page: string) {
-    this.navCtrl.push(page);
+    this.navCtrl.push(page, {
+      idempresa: 'DIS'
+    });
   }
 
   salir() {
