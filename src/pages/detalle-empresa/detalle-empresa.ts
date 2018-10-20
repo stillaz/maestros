@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams, ModalController, Modal, AlertController } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, ModalController, Modal, AlertController, Platform } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '../../../node_modules/@angular/forms';
 import { EmpresaOptions } from '../../interfaces/empresa-options';
 import { AngularFirestoreDocument, AngularFirestore } from '../../../node_modules/angularfire2/firestore';
@@ -31,6 +31,7 @@ export class DetalleEmpresaPage {
   mapa: Modal;
   filePathData: string;
   negocios: string[];
+  mobile: boolean;
 
   constructor(
     public navCtrl: NavController,
@@ -40,9 +41,11 @@ export class DetalleEmpresaPage {
     public modalCtrl: ModalController,
     private camera: Camera,
     private storage: AngularFireStorage,
-    public alertCtrl: AlertController
+    public alertCtrl: AlertController,
+    public plt: Platform
   ) {
     this.empresa = this.navParams.get('empresa');
+    this.mobile = !plt.is('core');
     this.updateNegocios();
     this.updateEmpresa();
   }
@@ -171,12 +174,12 @@ export class DetalleEmpresaPage {
     this.empresaDoc.set(this.empresa);
 
     let alert = this.nuevo ? this.alertCtrl.create({
-      title: 'Usuario registrado',
-      message: 'El usuario ha sido registrado exitosamente',
+      title: 'Empresa registrada',
+      message: 'La empresa ha sido registrada',
       buttons: ['OK']
     }) : this.alertCtrl.create({
-      title: 'Usuario actualizado',
-      message: 'El usuario ha sido actualizado exitosamente',
+      title: 'Empresa actualizado',
+      message: 'Los datos de la empresa ha sido actualizados',
       buttons: ['OK']
     });
     alert.present();
