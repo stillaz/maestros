@@ -31,6 +31,10 @@ export class MapPage {
       case 'Barbería':
         this.imagen = 'assets/imgs/barberia-mark.png';
         break;
+
+        case 'Spa':
+        this.imagen = 'assets/imgs/spa-mark.png';
+        break;
     }
     platform.ready().then(() => {
       this.initMap();

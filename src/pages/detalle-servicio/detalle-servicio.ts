@@ -31,6 +31,7 @@ export class DetalleServicioPage {
   idempresa: string;
   negocios: string[];
   grupos: string[];
+  pagos: string[];
 
   constructor(
     public navCtrl: NavController,
@@ -77,7 +78,8 @@ export class DetalleServicioPage {
       valor: [this.servicio.valor, Validators.required],
       grupo: [this.servicio.grupo, Validators.required],
       imagen: [this.servicio.imagen],
-      negocio: [this.servicio.negocio, Validators.required]
+      negocio: [this.servicio.negocio, Validators.required],
+      sesiones: [this.servicio.sesiones, Validators.min(1)]
     });
   }
 
@@ -93,7 +95,8 @@ export class DetalleServicioPage {
         imagen: null,
         activo: true,
         idempresa: null,
-        negocio: null
+        negocio: null,
+        sesiones: 1
       };
     }
 

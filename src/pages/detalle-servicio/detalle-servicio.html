@@ -59,6 +59,26 @@
         </ion-item>
 
         <ion-item>
+          <ion-label floating>Sesiones:</ion-label>
+          <ion-input type="number" formControlName="valor"></ion-input>
+        </ion-item>
+
+        <ion-item color="danger" *ngIf="todo.controls.sesiones.errors && todo.controls.sesiones.touched">
+          <p>El valor del sesiones no es válido</p>
+        </ion-item>
+
+        <ion-item>
+          <ion-label floating>Modo de pago:</ion-label>
+          <ion-select formControlName="pago" multiple="false">
+            <ion-option *ngFor="let item of pagos" [value]="item">{{item}}</ion-option>
+          </ion-select>
+        </ion-item>
+
+        <ion-item color="danger" *ngIf="todo.controls.pago.errors && todo.controls.pago.touched">
+          <p>Debe seleccionar al menos un grupo</p>
+        </ion-item>
+
+        <ion-item>
           <ion-label floating>Grupo:</ion-label>
           <ion-select formControlName="grupo" multiple="true">
             <ion-option *ngFor="let item of grupos" [value]="item">{{item}}</ion-option>

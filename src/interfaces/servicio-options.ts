@@ -9,5 +9,6 @@ export interface ServicioOptions {
     imagen: string,
     activo: boolean,
     idempresa: string,
-    negocio: string[]
+    negocio: string[],
+    sesiones: number
 }
