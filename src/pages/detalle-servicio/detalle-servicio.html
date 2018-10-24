@@ -60,7 +60,7 @@
 
         <ion-item>
           <ion-label floating>Sesiones:</ion-label>
-          <ion-input type="number" formControlName="valor"></ion-input>
+          <ion-input type="number" formControlName="sesiones"></ion-input>
         </ion-item>
 
         <ion-item color="danger" *ngIf="todo.controls.sesiones.errors && todo.controls.sesiones.touched">
@@ -75,7 +75,7 @@
         </ion-item>
 
         <ion-item color="danger" *ngIf="todo.controls.pago.errors && todo.controls.pago.touched">
-          <p>Debe seleccionar al menos un grupo</p>
+          <p>Debe seleccionar al menos un pago</p>
         </ion-item>
 
         <ion-item>

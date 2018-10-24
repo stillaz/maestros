@@ -49,6 +49,7 @@ export class DetalleServicioPage {
     this.idempresa = this.navParams.get('idempresa');
     this.servicio = this.navParams.get('data');
     this.updateGrupos();
+    this.updatePagos();
     this.updateNegocios();
     this.updateServicio();
   }
@@ -57,6 +58,14 @@ export class DetalleServicioPage {
     this.afs.doc<any>('clases/Grupos').valueChanges().subscribe(data => {
       if (data) {
         this.grupos = data.data;
+      }
+    });
+  }
+
+  updatePagos() {
+    this.afs.doc<any>('clases/Pagos').valueChanges().subscribe(data => {
+      if (data) {
+        this.pagos = data.data;
       }
     });
   }
@@ -79,7 +88,8 @@ export class DetalleServicioPage {
       grupo: [this.servicio.grupo, Validators.required],
       imagen: [this.servicio.imagen],
       negocio: [this.servicio.negocio, Validators.required],
-      sesiones: [this.servicio.sesiones, Validators.min(1)]
+      sesiones: [this.servicio.sesiones, Validators.min(1)],
+      pago: [this.servicio.pago, Validators.required]
     });
   }
 
@@ -96,7 +106,8 @@ export class DetalleServicioPage {
         activo: true,
         idempresa: null,
         negocio: null,
-        sesiones: 1
+        sesiones: 1,
+        pago: 'Inmediato'
       };
     }
 

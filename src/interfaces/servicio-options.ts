@@ -10,5 +10,6 @@ export interface ServicioOptions {
     activo: boolean,
     idempresa: string,
     negocio: string[],
-    sesiones: number
+    sesiones: number,
+    pago: string
 }
