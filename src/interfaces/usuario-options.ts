@@ -1,4 +1,5 @@
 import { PerfilOptions } from "./perfil-options";
+import { ConfiguracionOptions } from "./configuracion-options";
 
 export interface UsuarioOptions{
     id: string,
@@ -8,5 +9,6 @@ export interface UsuarioOptions{
     perfiles: PerfilOptions[],
     imagen: string,
     activo: boolean,
-    idempresa: string
+    idempresa: string,
+    configuracion: ConfiguracionOptions
 }

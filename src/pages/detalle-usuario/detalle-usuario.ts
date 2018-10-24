@@ -9,6 +9,8 @@ import { Camera, CameraOptions } from '@ionic-native/camera';
 import { PerfilOptions } from '../../interfaces/perfil-options';
 import { AngularFireAuth } from 'angularfire2/auth';
 import firebase from 'firebase';
+import { ConfiguracionOptions } from '../../interfaces/configuracion-options';
+import { EmpresaOptions } from '../../interfaces/empresa-options';
 
 /**
  * Generated class for the DetalleUsuarioPage page.
@@ -29,9 +31,11 @@ export class DetalleUsuarioPage {
   nuevo: boolean = true;
   todo: FormGroup;
   perfiles: PerfilOptions[];
-  filePathData: string;
+  private filePathData: string;
   idempresa: string;
   private filePathPerfiles: string;
+  private filePathEmpresa: string;
+  private configuracion: ConfiguracionOptions;
 
   constructor(
     public navCtrl: NavController,
@@ -64,7 +68,8 @@ export class DetalleUsuarioPage {
         imagen: null,
         activo: true,
         perfiles: [],
-        idempresa: this.idempresa
+        idempresa: this.idempresa,
+        configuracion: null
       };
 
       if (this.usuario.idempresa === 'DIS') {
@@ -80,9 +85,14 @@ export class DetalleUsuarioPage {
         }]
       }
     }
-    this.filePathPerfiles = this.idempresa ? 'negocios/' + this.idempresa + '/perfiles' : 'perfiles/';
-    this.filePathData = this.idempresa ? 'negocios/' + this.idempresa + '/usuarios/' + this.usuario.id : 'usuarios/' + this.usuario.id;
+    this.filePathEmpresa = this.idempresa ? 'negocios/' + this.idempresa : null;
+
+    this.updateConfiguracionEmpresa();
+
+    this.filePathPerfiles = this.filePathEmpresa ? this.filePathEmpresa + '/perfiles' : 'perfiles/';
+    this.filePathData = this.filePathEmpresa ? this.filePathEmpresa + '/usuarios/' + this.usuario.id : 'usuarios/' + this.usuario.id;
     this.usuarioDoc = this.afs.doc<UsuarioOptions>(this.filePathData);
+
     this.usuarioDoc.valueChanges().subscribe(data => {
       if (data) {
         this.usuario = data;
@@ -94,9 +104,18 @@ export class DetalleUsuarioPage {
     this.form();
   }
 
+  updateConfiguracionEmpresa() {
+    console.log(this.filePathEmpresa);
+    const empresaDoc: AngularFirestoreDocument<EmpresaOptions> = this.afs.doc<EmpresaOptions>(this.filePathEmpresa);
+    empresaDoc.valueChanges().subscribe(data => {
+      if (data) {
+        this.configuracion = data.configuracion;
+      }
+    });
+  }
+
   updatePerfiles() {
-    let perfilesCollection: AngularFirestoreCollection<PerfilOptions>;
-    perfilesCollection = this.afs.collection<PerfilOptions>(this.filePathPerfiles);
+    const perfilesCollection: AngularFirestoreCollection<PerfilOptions> = this.afs.collection<PerfilOptions>(this.filePathPerfiles);
     perfilesCollection.valueChanges().subscribe(data => {
       this.perfiles = data;
     });
@@ -210,7 +229,8 @@ export class DetalleUsuarioPage {
       imagen: usuario.imagen,
       activo: true,
       perfiles: this.todo.value.perfiles,
-      idempresa: this.idempresa
+      idempresa: this.idempresa,
+      configuracion: this.configuracion
     };
 
     if (this.nuevo) {
