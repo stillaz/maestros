@@ -3,6 +3,9 @@ import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angu
 import { AngularFirestoreDocument, AngularFirestore, AngularFirestoreCollection } from '../../../node_modules/angularfire2/firestore';
 import { EmpresaOptions } from '../../interfaces/empresa-options';
 import { ServicioOptions } from '../../interfaces/servicio-options';
+import { PerfilOptions } from '../../interfaces/perfil-options';
+import { UsuarioOptions } from '../../interfaces/usuario-options';
+import { GrupoOptions } from '../../interfaces/grupo-options';
 
 /**
  * Generated class for the MenuEmpresaPage page.
@@ -22,8 +25,9 @@ export class MenuEmpresaPage {
   empresa: EmpresaOptions;
   opciones: any[];
   servicioCollecion: AngularFirestoreCollection<ServicioOptions>;
-  perfilCollecion: AngularFirestoreCollection<ServicioOptions>;
-  usuarioCollecion: AngularFirestoreCollection<ServicioOptions>;
+  perfilCollecion: AngularFirestoreCollection<PerfilOptions>;
+  usuarioCollecion: AngularFirestoreCollection<UsuarioOptions>;
+  grupoCollection: AngularFirestoreCollection<GrupoOptions>;
 
   constructor(
     public navCtrl: NavController,
@@ -34,28 +38,27 @@ export class MenuEmpresaPage {
     let idnegocio = this.navParams.get('idempresa');
     this.empresaDoc = this.afs.doc<EmpresaOptions>('negocios/' + idnegocio);
     this.updateNegocio();
-    this.opciones = [
-      {
-        grupo: 'Horarios',
-        datos: [],
-        page: 'HorarioPage'
-      },
-      {
-        grupo: 'Servicios',
-        datos: [],
-        page: 'DetalleServicioPage'
-      },
-      {
-        grupo: 'Perfiles',
-        datos: [],
-        page: 'DetallePerfilPage'
-      },
-      {
-        grupo: 'Usuarios',
-        datos: [],
-        page: 'DetalleUsuarioPage'
-      },
-    ]
+    this.opciones = [{
+      grupo: 'Horarios',
+      datos: [],
+      page: 'HorarioPage'
+    }, {
+      grupo: 'Grupos',
+      datos: [],
+      page: 'DetalleGrupoPage'
+    }, {
+      grupo: 'Servicios',
+      datos: [],
+      page: 'DetalleServicioPage'
+    }, {
+      grupo: 'Perfiles',
+      datos: [],
+      page: 'DetallePerfilPage'
+    }, {
+      grupo: 'Usuarios',
+      datos: [],
+      page: 'DetalleUsuarioPage'
+    }];
   }
 
   configurarHorario() {
@@ -86,19 +89,24 @@ export class MenuEmpresaPage {
           this.configurarHorario();
         }
 
+        this.grupoCollection = this.empresaDoc.collection('grupos');
+        this.grupoCollection.valueChanges().subscribe(grupos => {
+          this.opciones[1].datos = grupos;
+        });
+
         this.servicioCollecion = this.empresaDoc.collection('servicios');
         this.servicioCollecion.valueChanges().subscribe(servicios => {
-          this.opciones[1].datos = servicios;
+          this.opciones[2].datos = servicios;
         });
 
         this.perfilCollecion = this.empresaDoc.collection('perfiles');
         this.perfilCollecion.valueChanges().subscribe(perfiles => {
-          this.opciones[2].datos = perfiles;
+          this.opciones[3].datos = perfiles;
         });
 
         this.usuarioCollecion = this.empresaDoc.collection('usuarios');
         this.usuarioCollecion.valueChanges().subscribe(usuarios => {
-          this.opciones[3].datos = usuarios;
+          this.opciones[4].datos = usuarios;
         });
       }
     });
