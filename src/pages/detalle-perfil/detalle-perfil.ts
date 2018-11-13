@@ -6,7 +6,6 @@ import { AngularFireStorage } from 'angularfire2/storage';
 import { PerfilOptions } from '../../interfaces/perfil-options';
 import { finalize } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/camera';
-import { ServicioOptions } from '../../interfaces/servicio-options';
 import firebase from 'firebase';
 import { GrupoOptions } from '../../interfaces/grupo-options';
 
@@ -145,10 +144,6 @@ export class DetallePerfilPage {
     ).subscribe();
   }
 
-  compareFn(p1: ServicioOptions, p2: ServicioOptions): boolean {
-    return p1 && p2 ? p1.id === p2.id : p1 === p2;
-  }
-
   guardar() {
     this.perfil = this.todo.value;
     const id = this.perfil.nombre;
@@ -213,6 +208,10 @@ export class DetallePerfilPage {
       }]
     });
     alert.present();
+  }
+
+  compareFn(e1: GrupoOptions, e2: GrupoOptions): boolean {
+    return e1 && e2 ? e1.id === e2.id : e1 === e2;
   }
 
 }

@@ -74,14 +74,11 @@ export class DetalleUsuarioPage {
 
       if (this.usuario.idempresa === 'DIS') {
         this.usuario.perfiles = [{
-          activo: true,
-          grupo: ['SA'],
+          grupo: null,
           id: 'SA',
           idempresa: 'DIS',
           imagen: null,
-          negocio: ['DIS'],
-          nombre: 'SA',
-          servicios: null,
+          nombre: 'SA'
         }]
       }
     }
