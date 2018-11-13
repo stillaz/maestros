@@ -34,30 +34,12 @@
         <ion-item>
           <ion-label floating>Grupo:</ion-label>
           <ion-select formControlName="grupo" multiple="true">
-            <ion-option *ngFor="let item of grupos" [value]="item">{{item}}</ion-option>
+            <ion-option *ngFor="let item of grupos" [value]="item">{{item.nombre}}</ion-option>
           </ion-select>
         </ion-item>
 
         <ion-item color="danger" *ngIf="todo.controls.grupo.errors && todo.controls.grupo.touched">
           <p>Debe seleccionar al menos un grupo</p>
-        </ion-item>
-
-        <ion-item>
-          <ion-label floating>Negocio:</ion-label>
-          <ion-select formControlName="negocio" multiple="true">
-            <ion-option *ngFor="let item of negocios" [value]="item">{{item}}</ion-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item *ngIf="idempresa">
-          <ion-label floating>Servicios:</ion-label>
-          <ion-select formControlName="servicios" multiple="true" [compareWith]="compareFn">
-            <ion-option *ngFor="let servicio of servicios" [value]="servicio">{{servicio.nombre}}</ion-option>
-          </ion-select>
-        </ion-item>
-
-        <ion-item>
-          <img *ngIf="todo.controls.imagen.value" [src]="todo.controls.imagen.value" style="max-width:300px;" />
         </ion-item>
 
         <ion-item *ngIf="!mobile">

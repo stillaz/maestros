@@ -8,6 +8,7 @@ import { finalize } from 'rxjs/operators';
 import { Camera, CameraOptions } from '@ionic-native/camera';
 import { ServicioOptions } from '../../interfaces/servicio-options';
 import firebase from 'firebase';
+import { GrupoOptions } from '../../interfaces/grupo-options';
 
 /**
  * Generated class for the DetallePerfilPage page.
@@ -23,16 +24,14 @@ import firebase from 'firebase';
 })
 export class DetallePerfilPage {
 
-  todo: FormGroup;
-  nuevo: boolean = true;
-  mobile: boolean;
-  filePathData: string;
-  perfil: PerfilOptions;
-  servicios: ServicioOptions[];
-  idempresa: string;
-  grupos: string[];
-  negocios: string[];
-  filePathServicios: string;
+  public todo: FormGroup;
+  public nuevo: boolean = true;
+  public mobile: boolean;
+  private filePathData: string;
+  private filePathEmpresa: string;
+  public perfil: PerfilOptions;
+  private idempresa: string;
+  public grupos: GrupoOptions[];
 
   private perfilDoc: AngularFirestoreDocument<PerfilOptions>;
 
@@ -51,65 +50,43 @@ export class DetallePerfilPage {
     this.mobile = !plt.is('core');
     this.idempresa = this.navParams.get('idempresa');
     this.perfil = this.navParams.get('data');
+    this.filePathEmpresa = 'negocios/' + this.idempresa;
     this.updateGrupos();
-    this.updateNegocios();
-    this.cargar();
+    this.updatePerfil();
   }
 
   updateGrupos() {
-    this.afs.doc<any>('clases/Grupos').valueChanges().subscribe(data => {
-      if (data) {
-        this.grupos = data.data;
-      }
+    const filePathGrupos = this.filePathEmpresa + '/grupos/';
+    const gruposCollection: AngularFirestoreCollection<GrupoOptions> = this.afs.collection<GrupoOptions>(filePathGrupos);
+    gruposCollection.valueChanges().subscribe(data => {
+      this.grupos = data;
     });
   }
 
-  updateNegocios() {
-    this.afs.doc<any>('clases/Negocios').valueChanges().subscribe(data => {
-      if (data) {
-        this.negocios = data.data;
-      }
-    });
+  updatePerfil() {
+    if (!this.perfil) {
+      this.perfil = {} as PerfilOptions;
+    } else {
+      this.filePathData = this.filePathEmpresa + '/perfiles/' + this.perfil.id;
+      this.perfilDoc = this.afs.doc<PerfilOptions>(this.filePathData);
+      this.perfilDoc.valueChanges().subscribe(data => {
+        if (data) {
+          this.perfil = data;
+
+          this.nuevo = false;
+        }
+      });
+    }
+
+    this.form();
   }
 
   form() {
     this.todo = this.formBuilder.group({
-      id: [this.perfil.id, Validators.required],
       nombre: [this.perfil.nombre, Validators.required],
       imagen: [this.perfil.imagen],
-      servicios: [this.perfil.servicios],
-      grupo: [this.perfil.grupo, Validators.required],
-      negocio: [this.perfil.negocio, Validators.required]
+      grupo: [this.perfil.grupo]
     });
-  }
-
-  cargar() {
-    if (!this.perfil) {
-      this.perfil = {
-        id: this.afs.createId(),
-        nombre: null,
-        imagen: null,
-        servicios: null,
-        activo: true,
-        idempresa: null,
-        grupo: null,
-        negocio: null
-      };
-    }
-
-    this.filePathData = this.idempresa ? 'negocios/' + this.idempresa + '/perfiles/' + this.perfil.id : 'perfiles/' + this.perfil.id;
-    this.filePathServicios = this.idempresa ? 'negocios/' + this.idempresa + '/servicios/' : 'servicios/';
-    this.updateServicios();
-    this.perfilDoc = this.afs.doc<PerfilOptions>(this.filePathData);
-    this.perfilDoc.valueChanges().subscribe(data => {
-      if (data) {
-        this.perfil = data;
-
-        this.nuevo = false;
-      }
-    });
-
-    this.form();
   }
 
   sacarFoto() {
@@ -168,39 +145,32 @@ export class DetallePerfilPage {
     ).subscribe();
   }
 
-  updateServicios() {
-    let serviciosCollection: AngularFirestoreCollection<ServicioOptions>;
-    serviciosCollection = this.afs.collection<ServicioOptions>(this.filePathServicios);
-    serviciosCollection.valueChanges().subscribe(data => {
-      if (data) {
-        this.servicios = data;
-      } else {
-        this.servicios = [];
-      }
-    });
-  }
-
   compareFn(p1: ServicioOptions, p2: ServicioOptions): boolean {
     return p1 && p2 ? p1.id === p2.id : p1 === p2;
   }
 
   guardar() {
     this.perfil = this.todo.value;
-    if (this.idempresa) {
-      this.perfil.idempresa = this.idempresa;
-    }
-    this.perfilDoc.set(this.perfil);
-    let alert = this.nuevo ? this.alertCtrl.create({
-      title: 'Perfil registrado',
-      message: 'El perfil ha sido registrado exitosamente',
-      buttons: ['OK']
-    }) : this.alertCtrl.create({
-      title: 'Perfil actualizado',
-      message: 'El perfil ha sido actualizado exitosamente',
-      buttons: ['OK']
-    });;
+    const id = this.perfil.nombre;
+    this.perfil.id = this.perfil.nombre;
+    const perfilDoc = this.afs.doc<PerfilOptions>(this.filePathEmpresa + '/perfiles/' + id);
+    if (this.nuevo) {
+      perfilDoc.set(this.perfil);
+      this.alertCtrl.create({
+        title: 'Perfil registrado',
+        message: 'El perfil ha sido registrado exitosamente',
+        buttons: ['OK']
+      }).present();
+    } else {
+      this.perfilDoc.delete();
+      perfilDoc.set(this.perfil);
 
-    alert.present();
+      this.alertCtrl.create({
+        title: 'Perfil actualizado',
+        message: 'El perfil ha sido actualizado exitosamente',
+        buttons: ['OK']
+      }).present();
+    }
     this.viewCtrl.dismiss();
   }
 
@@ -227,23 +197,20 @@ export class DetallePerfilPage {
     let alert = this.alertCtrl.create({
       title: 'Eliminar perfil',
       message: '¿Desea eliminar el perfil ' + perfil.nombre,
-      buttons: [
-        {
-          text: 'No',
-          role: 'cancel'
-        },
-        {
-          text: 'Si',
-          handler: () => {
-            this.perfilDoc.delete().then(() => {
-              if (perfil.imagen) {
-                this.storage.ref(this.filePathData).delete();
-              }
-              this.genericAlert('Eliminar perfil', 'El perfil ha sido eliminado');
-            });
-          }
+      buttons: [{
+        text: 'No',
+        role: 'cancel'
+      }, {
+        text: 'Si',
+        handler: () => {
+          this.perfilDoc.delete().then(() => {
+            if (perfil.imagen) {
+              this.storage.ref(this.filePathData).delete();
+            }
+            this.genericAlert('Eliminar perfil', 'El perfil ha sido eliminado');
+          });
         }
-      ]
+      }]
     });
     alert.present();
   }
