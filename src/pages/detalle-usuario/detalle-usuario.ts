@@ -76,7 +76,6 @@ export class DetalleUsuarioPage {
         this.usuario.perfiles = [{
           grupo: null,
           id: 'SA',
-          idempresa: 'DIS',
           imagen: null,
           nombre: 'SA'
         }]
@@ -102,7 +101,6 @@ export class DetalleUsuarioPage {
   }
 
   updateConfiguracionEmpresa() {
-    console.log(this.filePathEmpresa);
     const empresaDoc: AngularFirestoreDocument<EmpresaOptions> = this.afs.doc<EmpresaOptions>(this.filePathEmpresa);
     empresaDoc.valueChanges().subscribe(data => {
       if (data) {
