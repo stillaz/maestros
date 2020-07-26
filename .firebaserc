@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "barberia-12b66"
+  },
+  "targets": {
+    "barberia-12b66": {
+      "hosting": {
+        "admin-servicios": [
+          "admin-servicios"
+        ]
+      }
+    }
+  }
+}
