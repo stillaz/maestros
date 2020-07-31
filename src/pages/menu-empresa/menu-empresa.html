@@ -21,9 +21,8 @@
         <br/> Teléfono: {{empresa.telefono}}
       </ion-card-header>
 
-      <img *ngIf="empresa.imagen" [src]="empresa.imagen">
-
       <ion-card-content>
+        <img *ngIf="empresa.imagen" [src]="empresa.imagen" style="max-width: 300px;">
         <p>Representante: {{empresa.nombreRepresentante}}. Teléfono: {{empresa.telefonoRepresentante}}. Email: {{empresa.correoRepresentante}}</p>
       </ion-card-content>
 
